@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Web\CampaignController;
 use App\Http\Controllers\Web\CampaignMembershipController;
+use App\Http\Controllers\Web\CampaignSessionController;
 use App\Http\Controllers\Web\ProfileController;
+use App\Http\Controllers\Web\SessionAttendanceController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -45,6 +47,12 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->name('campaign-members.remove');
     Route::post('campaigns/{campaign:slug}/leave', [CampaignMembershipController::class, 'leave'])
         ->name('campaigns.leave');
+    Route::post('campaigns/{campaign:slug}/sessions', [CampaignSessionController::class, 'store'])
+        ->name('campaign-sessions.store');
+    Route::put('campaign-sessions/{campaignSession}', [CampaignSessionController::class, 'update'])
+        ->name('campaign-sessions.update');
+    Route::put('campaign-sessions/{campaignSession}/attendance', [SessionAttendanceController::class, 'update'])
+        ->name('campaign-sessions.attendance.update');
 });
 
 require __DIR__.'/auth.php';

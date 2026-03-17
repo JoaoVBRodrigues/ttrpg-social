@@ -31,6 +31,19 @@
                     </div>
                 </div>
 
+                <div class="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-medium text-slate-900">{{ __('Sessions and RSVP') }}</h3>
+                            <p class="mt-1 text-sm text-slate-500">{{ __('Upcoming sessions are shown in your timezone and stored internally in UTC.') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <livewire:sessions.rsvp-panel :campaign="$campaign" />
+                    </div>
+                </div>
+
                 <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
                     <div class="flex items-center justify-between">
                         <h3 class="text-lg font-medium text-slate-900">{{ __('Members') }}</h3>
@@ -101,6 +114,36 @@
                     @endcan
 
                     @can('manageMembers', $campaign)
+                        <form method="POST" action="{{ route('campaign-sessions.store', $campaign) }}" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                            @csrf
+                            <h3 class="text-lg font-medium text-slate-900">{{ __('Schedule a session') }}</h3>
+                            <div class="mt-4 space-y-4">
+                                <div>
+                                    <x-input-label for="session_title" :value="__('Title')" />
+                                    <x-text-input id="session_title" name="title" type="text" class="mt-1 block w-full" required />
+                                </div>
+                                <div>
+                                    <x-input-label for="session_description" :value="__('Description')" />
+                                    <textarea id="session_description" name="description" rows="3" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                                </div>
+                                <div>
+                                    <x-input-label for="session_starts_at" :value="__('Starts at')" />
+                                    <x-text-input id="session_starts_at" name="starts_at" type="datetime-local" class="mt-1 block w-full" required />
+                                </div>
+                                <div>
+                                    <x-input-label for="session_ends_at" :value="__('Ends at')" />
+                                    <x-text-input id="session_ends_at" name="ends_at" type="datetime-local" class="mt-1 block w-full" required />
+                                </div>
+                                <div>
+                                    <x-input-label for="session_timezone" :value="__('Timezone')" />
+                                    <x-text-input id="session_timezone" name="timezone" type="text" class="mt-1 block w-full" value="{{ $campaign->timezone }}" required />
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <x-primary-button>{{ __('Create session') }}</x-primary-button>
+                            </div>
+                        </form>
+
                         <form method="POST" action="{{ route('campaigns.members.invite', $campaign) }}" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                             @csrf
                             <h3 class="text-lg font-medium text-slate-900">{{ __('Invite a member') }}</h3>
