@@ -1,59 +1,276 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TTRPG Social Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel 12 + Livewire application for organizing TTRPG campaigns, sessions, RSVP, realtime chat, dice rolls, notifications, and campaign compendium content.
 
-## About Laravel
+## Prerequisites
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Docker Desktop with Docker Compose
+- Git
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Optional but useful:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- A terminal with `docker compose`
+- A database client if you want to inspect MySQL manually
 
-## Learning Laravel
+## Local Architecture
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+The local Docker stack includes:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- `app`: PHP 8.2 FPM container running Laravel
+- `nginx`: web server serving the app on `http://localhost:8080`
+- `mysql`: MySQL 8.4 with persistent data volume
+- `redis`: Redis for cache, queue, and broadcast support
+- `queue`: Laravel queue worker
+- `reverb`: Laravel Reverb websocket server
+- `frontend`: Vite dev server for Livewire/Blade frontend assets
 
-## Laravel Sponsors
+## First-Time Setup
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1. Clone the repository.
+2. Copy the environment file.
+3. Review the Docker-oriented defaults in `.env`.
+4. Build the containers.
+5. Start the stack.
+6. Install PHP and Node dependencies inside Docker.
+7. Generate the Laravel app key.
+8. Run migrations and seeders.
 
-### Premium Partners
+### Copy `.env.example` to `.env`
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+cp .env.example .env
+```
 
-## Contributing
+Important defaults for Docker in `.env`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- `APP_URL=http://localhost:8080`
+- `DB_HOST=mysql`
+- `DB_PORT=3306`
+- `DB_DATABASE=ttrpg_social`
+- `DB_USERNAME=ttrpg`
+- `DB_PASSWORD=ttrpg`
+- `REDIS_HOST=redis`
+- `QUEUE_CONNECTION=redis`
+- `CACHE_STORE=redis`
+- `BROADCAST_CONNECTION=reverb`
+- `REVERB_HOST=reverb`
+- `REVERB_PORT=8080`
+- `VITE_REVERB_HOST=localhost`
+- `VITE_REVERB_PORT=8081`
 
-## Code of Conduct
+## Build and Start
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Build images
 
-## Security Vulnerabilities
+```bash
+docker compose build
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Start the full stack
 
-## License
+```bash
+docker compose up -d
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The app container and frontend container will auto-install dependencies on first boot if needed, but the explicit install commands below are still the recommended setup flow.
+
+## Dependency Installation
+
+### Composer install
+
+```bash
+docker compose exec app composer install
+```
+
+### NPM install
+
+```bash
+docker compose exec frontend npm install
+```
+
+## Laravel App Initialization
+
+### Generate the application key
+
+```bash
+docker compose exec app php artisan key:generate
+```
+
+### Run migrations and seeders
+
+```bash
+docker compose exec app php artisan migrate --seed
+```
+
+If you want a clean reset:
+
+```bash
+docker compose exec app php artisan migrate:fresh --seed
+```
+
+## Running the Main Services
+
+### Application
+
+The Laravel app is served through nginx at:
+
+- `http://localhost:8080`
+
+### Queue worker
+
+The queue worker runs in the `queue` service automatically when the stack is up.
+
+Useful commands:
+
+```bash
+docker compose logs -f queue
+docker compose restart queue
+docker compose exec app php artisan queue:work --verbose --tries=1 --timeout=90
+```
+
+### Websocket / Reverb
+
+The Reverb websocket server runs in the `reverb` service automatically when the stack is up.
+
+Endpoints:
+
+- App HTTP: `http://localhost:8080`
+- Reverb websocket port: `ws://localhost:8081`
+
+Useful commands:
+
+```bash
+docker compose logs -f reverb
+docker compose restart reverb
+docker compose exec app php artisan reverb:start --host=0.0.0.0 --port=8080
+```
+
+### Vite / frontend watch
+
+The `frontend` service runs the Vite dev server automatically.
+
+Useful commands:
+
+```bash
+docker compose logs -f frontend
+docker compose restart frontend
+docker compose exec frontend npm run dev -- --host=0.0.0.0 --port=5173
+docker compose exec frontend npm run build
+```
+
+Frontend dev server:
+
+- `http://localhost:5173`
+
+## Running Tests
+
+Run the full Laravel test suite inside Docker:
+
+```bash
+docker compose exec app php artisan test
+```
+
+Run a specific test file:
+
+```bash
+docker compose exec app php artisan test --filter=CampaignNotificationTest
+```
+
+## Useful Laravel Commands Inside Docker
+
+```bash
+docker compose exec app php artisan config:clear
+docker compose exec app php artisan route:list
+docker compose exec app php artisan db:seed
+docker compose exec app php artisan tinker
+```
+
+## Accessing the Application
+
+After setup, open:
+
+- `http://localhost:8080`
+
+Supporting services:
+
+- MySQL host port: `localhost:33060`
+- Redis host port: `localhost:63790`
+- Reverb websocket port: `localhost:8081`
+- Vite dev server: `localhost:5173`
+
+## Validating Main Modules
+
+Use the seeded app with locally created users to validate the main flows:
+
+- register and verify login/logout flow
+- edit a user profile and preferences
+- create a campaign
+- invite or request campaign membership
+- schedule a session and answer RSVP
+- send chat messages
+- execute dice rolls
+- confirm notifications/jobs are being created
+- create and edit campaign compendium entries
+
+You can inspect running notifications and jobs with:
+
+```bash
+docker compose logs -f queue
+docker compose logs -f reverb
+docker compose exec app php artisan pail --timeout=0
+```
+
+## Manual QA Checklist
+
+- Authentication works: register, log in, log out, reset password flow loads.
+- Profile update works: change profile fields and notification preferences.
+- Campaign creation works: create a campaign and confirm owner membership is created.
+- Session RSVP works: create a session as GM and respond as an active member.
+- Chat works: send a campaign message and see it persist.
+- Dice roller works: submit a valid roll and confirm a dice message plus persisted roll history.
+- Notifications/jobs work: invite a member, schedule/update a session, mark a message as important, and watch the queue logs.
+- Compendium pages work: create, update, and delete campaign reference entries.
+
+## Troubleshooting
+
+### Rebuild everything
+
+```bash
+docker compose down
+docker compose build --no-cache
+docker compose up -d
+```
+
+### Remove containers and volumes
+
+```bash
+docker compose down -v
+```
+
+### If environment values change
+
+```bash
+docker compose exec app php artisan config:clear
+docker compose restart app queue reverb nginx
+```
+
+## Exact Runbook
+
+Run these commands in order from the repository root:
+
+```bash
+cp .env.example .env
+docker compose build
+docker compose up -d
+docker compose exec app composer install
+docker compose exec frontend npm install
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate --seed
+docker compose exec app php artisan test
+```
+
+Then open:
+
+```text
+http://localhost:8080
+```
