@@ -1,4 +1,12 @@
 <x-app-layout>
+    @php($referenceTypes = [
+        'useful_link' => __('Useful link'),
+        'house_rule' => __('House rule'),
+        'system_note' => __('System note'),
+        'intro_material' => __('Intro material'),
+        'character_baseline' => __('Character baseline'),
+    ])
+
     <x-slot name="header">
         <div class="flex items-center justify-between gap-4">
             <div>
@@ -45,6 +53,100 @@
                 </div>
 
                 <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-medium text-slate-900">{{ __('Campaign compendium') }}</h3>
+                            <p class="mt-1 text-sm text-slate-500">{{ __('Quick-reference links, notes, and onboarding material for the table.') }}</p>
+                        </div>
+                        <span class="text-sm text-slate-500">{{ $campaign->references->count() }} {{ __('entries') }}</span>
+                    </div>
+
+                    <div class="mt-6 space-y-4">
+                        @forelse($campaign->references as $reference)
+                            <article class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                                @can('update', $campaign)
+                                    <form method="POST" action="{{ route('campaign-references.update', $reference) }}" class="space-y-4">
+                                        @csrf
+                                        @method('PUT')
+
+                                        <div class="grid gap-4 md:grid-cols-2">
+                                            <div>
+                                                <x-input-label for="{{ 'reference_title_'.$reference->id }}" :value="__('Title')" />
+                                                <x-text-input id="{{ 'reference_title_'.$reference->id }}" name="title" type="text" class="mt-1 block w-full" value="{{ old('title', $reference->title) }}" required />
+                                            </div>
+                                            <div>
+                                                <x-input-label for="{{ 'reference_type_'.$reference->id }}" :value="__('Type')" />
+                                                <select id="{{ 'reference_type_'.$reference->id }}" name="type" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                                    @foreach($referenceTypes as $value => $label)
+                                                        <option value="{{ $value }}" @selected(old('type', $reference->type) === $value)>{{ $label }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <x-input-label for="{{ 'reference_content_'.$reference->id }}" :value="__('Content')" />
+                                            <textarea id="{{ 'reference_content_'.$reference->id }}" name="content" rows="4" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('content', $reference->content) }}</textarea>
+                                        </div>
+
+                                        <div class="grid gap-4 md:grid-cols-[2fr,1fr]">
+                                            <div>
+                                                <x-input-label for="{{ 'reference_url_'.$reference->id }}" :value="__('External URL')" />
+                                                <x-text-input id="{{ 'reference_url_'.$reference->id }}" name="external_url" type="url" class="mt-1 block w-full" value="{{ old('external_url', $reference->external_url) }}" />
+                                            </div>
+                                            <div>
+                                                <x-input-label for="{{ 'reference_sort_'.$reference->id }}" :value="__('Sort order')" />
+                                                <x-text-input id="{{ 'reference_sort_'.$reference->id }}" name="sort_order" type="number" min="0" class="mt-1 block w-full" value="{{ old('sort_order', $reference->sort_order) }}" />
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center justify-between gap-4">
+                                            <p class="text-sm text-slate-500">
+                                                {{ $referenceTypes[$reference->type] ?? ucfirst(str_replace('_', ' ', $reference->type)) }}
+                                                @if($reference->creator)
+                                                    {{ __('by') }} {{ $reference->creator->name }}
+                                                @endif
+                                            </p>
+
+                                            <x-primary-button>{{ __('Save entry') }}</x-primary-button>
+                                        </div>
+                                    </form>
+
+                                    <form method="POST" action="{{ route('campaign-references.destroy', $reference) }}" class="mt-3">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-sm font-medium text-rose-600 transition hover:text-rose-700">
+                                            {{ __('Delete entry') }}
+                                        </button>
+                                    </form>
+                                @else
+                                    <div class="flex items-start justify-between gap-4">
+                                        <div>
+                                            <h4 class="text-base font-semibold text-slate-900">{{ $reference->title }}</h4>
+                                            <p class="mt-1 text-sm uppercase tracking-[0.2em] text-slate-500">{{ $referenceTypes[$reference->type] ?? ucfirst(str_replace('_', ' ', $reference->type)) }}</p>
+                                        </div>
+
+                                        @if($reference->external_url)
+                                            <a href="{{ $reference->external_url }}" target="_blank" rel="noreferrer" class="text-sm font-medium text-indigo-600 transition hover:text-indigo-700">
+                                                {{ __('Open link') }}
+                                            </a>
+                                        @endif
+                                    </div>
+
+                                    @if($reference->content)
+                                        <p class="mt-4 whitespace-pre-line text-sm leading-7 text-slate-600">{{ $reference->content }}</p>
+                                    @endif
+                                @endcan
+                            </article>
+                        @empty
+                            <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-6 text-sm text-slate-500">
+                                {{ __('No compendium entries yet.') }}
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
                     <div class="flex items-center justify-between">
                         <h3 class="text-lg font-medium text-slate-900">{{ __('Members') }}</h3>
                         <span class="text-sm text-slate-500">{{ $campaign->members_count }} {{ __('tracked memberships') }}</span>
@@ -55,7 +157,7 @@
                             <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
                                 <div>
                                     <p class="font-medium text-slate-900">{{ $member->user->name }}</p>
-                                    <p class="text-sm text-slate-500">{{ '@'.$member->user->username }} · {{ $member->role->value }} · {{ $member->status->value }}</p>
+                                    <p class="text-sm text-slate-500">{{ '@'.$member->user->username }} - {{ $member->role->value }} - {{ $member->status->value }}</p>
                                 </div>
 
                                 @can('manageMembers', $campaign)
@@ -202,6 +304,45 @@
                             </div>
                             <div class="mt-4">
                                 <x-primary-button>{{ __('Send invite') }}</x-primary-button>
+                            </div>
+                        </form>
+
+                        <form method="POST" action="{{ route('campaigns.references.store', $campaign) }}" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                            @csrf
+                            <h3 class="text-lg font-medium text-slate-900">{{ __('Add compendium entry') }}</h3>
+                            <div class="mt-4 space-y-4">
+                                <div>
+                                    <x-input-label for="reference_title" :value="__('Title')" />
+                                    <x-text-input id="reference_title" name="title" type="text" class="mt-1 block w-full" value="{{ old('title') }}" required />
+                                    <x-input-error class="mt-2" :messages="$errors->get('title')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="reference_type" :value="__('Type')" />
+                                    <select id="reference_type" name="type" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        @foreach($referenceTypes as $value => $label)
+                                            <option value="{{ $value }}" @selected(old('type') === $value)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                    <x-input-error class="mt-2" :messages="$errors->get('type')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="reference_content" :value="__('Content')" />
+                                    <textarea id="reference_content" name="content" rows="4" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('content') }}</textarea>
+                                    <x-input-error class="mt-2" :messages="$errors->get('content')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="reference_external_url" :value="__('External URL')" />
+                                    <x-text-input id="reference_external_url" name="external_url" type="url" class="mt-1 block w-full" value="{{ old('external_url') }}" />
+                                    <x-input-error class="mt-2" :messages="$errors->get('external_url')" />
+                                </div>
+                                <div>
+                                    <x-input-label for="reference_sort_order" :value="__('Sort order')" />
+                                    <x-text-input id="reference_sort_order" name="sort_order" type="number" min="0" class="mt-1 block w-full" value="{{ old('sort_order') }}" />
+                                    <x-input-error class="mt-2" :messages="$errors->get('sort_order')" />
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <x-primary-button>{{ __('Save reference') }}</x-primary-button>
                             </div>
                         </form>
                     @endcan

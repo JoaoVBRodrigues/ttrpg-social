@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Campaign;
 
+use App\Http\Resources\CampaignReference\CampaignReferenceResource;
 use App\Http\Resources\GameSystem\GameSystemResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ class CampaignResource extends JsonResource
             'next_session_at' => $this->next_session_at?->toIso8601String(),
             'owner' => new UserResource($this->whenLoaded('owner')),
             'game_system' => new GameSystemResource($this->whenLoaded('gameSystem')),
+            'references' => CampaignReferenceResource::collection($this->whenLoaded('references')),
             'members_count' => $this->whenCounted('members'),
             'created_at' => $this->created_at?->toIso8601String(),
         ];

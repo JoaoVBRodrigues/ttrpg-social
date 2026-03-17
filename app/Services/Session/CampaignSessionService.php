@@ -6,6 +6,8 @@ use App\Enums\CampaignMemberRole;
 use App\Enums\CampaignMemberStatus;
 use App\Enums\CampaignSessionStatus;
 use App\Enums\MessageType;
+use App\Events\CampaignSessionScheduled;
+use App\Events\CampaignSessionUpdated;
 use App\Models\Campaign;
 use App\Models\CampaignSession;
 use App\Models\Message;
@@ -41,7 +43,11 @@ class CampaignSessionService
             $this->refreshNextSessionAt($campaign);
             $this->createSystemNotice($campaign, $actor, "Session scheduled: {$session->title}");
 
-            return $session->load('attendances');
+            DB::afterCommit(function () use ($session, $actor): void {
+                CampaignSessionScheduled::dispatch($session->fresh(['campaign']), $actor);
+            });
+
+            return $session->load(['campaign', 'attendances']);
         });
     }
 
@@ -58,7 +64,11 @@ class CampaignSessionService
             $this->refreshNextSessionAt($session->campaign);
             $this->createSystemNotice($session->campaign, $actor, "Session updated: {$session->title}");
 
-            return $session->refresh()->load('attendances');
+            DB::afterCommit(function () use ($session, $actor): void {
+                CampaignSessionUpdated::dispatch($session->fresh(['campaign']), $actor);
+            });
+
+            return $session->refresh()->load(['campaign', 'attendances']);
         });
     }
 

@@ -71,6 +71,6 @@ class Campaign extends Model
 
     public function references(): HasMany
     {
-        return $this->hasMany(CampaignReference::class);
+        return $this->hasMany(CampaignReference::class)->orderBy('sort_order')->orderBy('title');
     }
 }

@@ -4,6 +4,8 @@ namespace App\Services\Campaign;
 
 use App\Enums\CampaignMemberRole;
 use App\Enums\CampaignMemberStatus;
+use App\Events\CampaignMemberInvited;
+use App\Events\CampaignMembershipReviewed;
 use App\Exceptions\DomainException;
 use App\Models\Campaign;
 use App\Models\CampaignMember;
@@ -59,13 +61,23 @@ class CampaignMembershipService
             ]);
             $membership->save();
 
-            return $membership->refresh();
+            DB::afterCommit(function () use ($membership): void {
+                CampaignMemberInvited::dispatch($membership->fresh(['campaign', 'user.notificationPreference', 'inviter']));
+            });
+
+            return $membership->refresh()->load(['campaign', 'user.notificationPreference', 'inviter']);
         });
     }
 
     public function reviewMembership(CampaignMember $membership, string $status): CampaignMember
     {
         return DB::transaction(function () use ($membership, $status): CampaignMember {
+            $shouldNotify = $membership->status?->value !== $status
+                && in_array($status, [
+                    CampaignMemberStatus::ACTIVE->value,
+                    CampaignMemberStatus::REJECTED->value,
+                ], true);
+
             $membership->status = $status;
 
             if ($status === CampaignMemberStatus::ACTIVE->value) {
@@ -74,7 +86,13 @@ class CampaignMembershipService
 
             $membership->save();
 
-            return $membership->refresh();
+            if ($shouldNotify) {
+                DB::afterCommit(function () use ($membership): void {
+                    CampaignMembershipReviewed::dispatch($membership->fresh(['campaign', 'user.notificationPreference']));
+                });
+            }
+
+            return $membership->refresh()->load(['campaign', 'user.notificationPreference']);
         });
     }
 

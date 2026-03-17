@@ -65,7 +65,7 @@ class CampaignController extends Controller
 
     public function show(Request $request, Campaign $campaign): View|CampaignResource
     {
-        $campaign->load(['owner', 'gameSystem', 'members.user'])->loadCount('members');
+        $campaign->load(['owner', 'gameSystem', 'members.user', 'references.creator'])->loadCount('members');
 
         if ($request->expectsJson()) {
             return new CampaignResource($campaign);

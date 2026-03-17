@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\CampaignController;
 use App\Http\Controllers\Web\CampaignDiceRollController;
 use App\Http\Controllers\Web\CampaignMembershipController;
 use App\Http\Controllers\Web\CampaignMessageController;
+use App\Http\Controllers\Web\CampaignReferenceController;
 use App\Http\Controllers\Web\CampaignSessionController;
 use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\SessionAttendanceController;
@@ -55,10 +56,16 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->name('campaigns.messages.store');
     Route::post('campaigns/{campaign:slug}/rolls', [CampaignDiceRollController::class, 'store'])
         ->name('campaigns.rolls.store');
+    Route::post('campaigns/{campaign:slug}/references', [CampaignReferenceController::class, 'store'])
+        ->name('campaigns.references.store');
     Route::put('campaign-sessions/{campaignSession}', [CampaignSessionController::class, 'update'])
         ->name('campaign-sessions.update');
     Route::put('campaign-sessions/{campaignSession}/attendance', [SessionAttendanceController::class, 'update'])
         ->name('campaign-sessions.attendance.update');
+    Route::put('campaign-references/{campaignReference}', [CampaignReferenceController::class, 'update'])
+        ->name('campaign-references.update');
+    Route::delete('campaign-references/{campaignReference}', [CampaignReferenceController::class, 'destroy'])
+        ->name('campaign-references.destroy');
 });
 
 require __DIR__.'/auth.php';
