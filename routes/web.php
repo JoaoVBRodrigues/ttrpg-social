@@ -16,10 +16,6 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::resource('campaigns', CampaignController::class)
-    ->only(['index', 'show'])
-    ->scoped(['campaign' => 'slug']);
-
 Route::get('u/{user:username}', [ProfileController::class, 'showPublic'])
     ->name('profile.public');
 
@@ -67,5 +63,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::delete('campaign-references/{campaignReference}', [CampaignReferenceController::class, 'destroy'])
         ->name('campaign-references.destroy');
 });
+
+Route::resource('campaigns', CampaignController::class)
+    ->only(['index', 'show'])
+    ->scoped(['campaign' => 'slug']);
 
 require __DIR__.'/auth.php';

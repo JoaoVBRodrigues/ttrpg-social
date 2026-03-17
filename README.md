@@ -206,7 +206,7 @@ Use the seeded app with locally created users to validate the main flows:
 
 - register and verify login/logout flow
 - edit a user profile and preferences
-- create a campaign
+- create a campaign by logging in and opening `http://localhost:8080/campaigns/create`
 - invite or request campaign membership
 - schedule a session and answer RSVP
 - send chat messages

@@ -16,6 +16,19 @@ class CampaignTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_verified_user_can_view_the_create_campaign_page(): void
+    {
+        $user = User::factory()->create();
+        GameSystem::factory()->create(['slug' => 'dnd-5e', 'name' => 'D&D 5e']);
+
+        $response = $this->actingAs($user)->get(route('campaigns.create'));
+
+        $response
+            ->assertOk()
+            ->assertSee('Create campaign')
+            ->assertSee('D&D 5e');
+    }
+
     public function test_verified_user_can_create_a_campaign(): void
     {
         $user = User::factory()->create();
