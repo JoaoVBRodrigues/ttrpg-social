@@ -74,6 +74,8 @@ docker compose up -d
 
 The app container and frontend container will auto-install dependencies on first boot if needed, but the explicit install commands below are still the recommended setup flow.
 
+Docker containers inject Docker-safe database, Redis, queue, cache, and Reverb hosts automatically. That means your normal local `.env` can stay local-development oriented if you want, while Docker still talks to `mysql`, `redis`, and `reverb` correctly.
+
 ## Dependency Installation
 
 ### Composer install
@@ -251,8 +253,32 @@ docker compose down -v
 
 ```bash
 docker compose exec app php artisan config:clear
-docker compose restart app queue reverb nginx
+docker compose up -d --force-recreate app queue reverb nginx frontend
 ```
+
+### If you generated a new `APP_KEY`
+
+Because Docker injects env vars when containers are created, changing `APP_KEY` in `.env` requires container recreation:
+
+```bash
+docker compose up -d --force-recreate app queue reverb nginx
+```
+
+### If Docker is still using localhost-style database or Redis hosts
+
+Check the live container env:
+
+```bash
+docker compose exec app env
+```
+
+The app container should resolve:
+
+- `DB_HOST=mysql`
+- `REDIS_HOST=redis`
+- `QUEUE_CONNECTION=redis`
+- `CACHE_STORE=redis`
+- `BROADCAST_CONNECTION=reverb`
 
 ## Exact Runbook
 
