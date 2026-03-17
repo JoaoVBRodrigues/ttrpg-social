@@ -6,8 +6,10 @@ use App\Events\CampaignMemberInvited;
 use App\Events\CampaignMembershipReviewed;
 use App\Events\CampaignSessionScheduled;
 use App\Events\CampaignSessionUpdated;
+use App\Events\ImportantCampaignMessageCreated;
 use App\Listeners\QueueCampaignInviteNotification;
 use App\Listeners\QueueCampaignMembershipReviewedNotification;
+use App\Listeners\QueueImportantMessageNotifications;
 use App\Listeners\QueueSessionNotifications;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -25,6 +27,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         CampaignSessionUpdated::class => [
             QueueSessionNotifications::class,
+        ],
+        ImportantCampaignMessageCreated::class => [
+            QueueImportantMessageNotifications::class,
         ],
     ];
 }

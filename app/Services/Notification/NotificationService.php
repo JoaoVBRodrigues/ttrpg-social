@@ -4,12 +4,14 @@ namespace App\Services\Notification;
 
 use App\Models\CampaignMember;
 use App\Models\CampaignSession;
+use App\Models\Message;
 use App\Models\NotificationPreference;
 use App\Models\User;
 use App\Notifications\CampaignInviteNotification;
 use App\Notifications\CampaignMembershipReviewedNotification;
 use App\Notifications\CampaignSessionScheduledNotification;
 use App\Notifications\CampaignSessionUpdatedNotification;
+use App\Notifications\ImportantCampaignMessageNotification;
 use App\Notifications\SessionReminderNotification;
 
 class NotificationService
@@ -57,6 +59,27 @@ class NotificationService
         }
 
         $recipient->notify(new SessionReminderNotification($session->load('campaign'), $channels));
+    }
+
+    public function sendImportantMessage(Message $message): void
+    {
+        $message->campaign->members()
+            ->where('status', 'active')
+            ->with(['user.notificationPreference'])
+            ->get()
+            ->each(function ($membership) use ($message): void {
+                if ($membership->user_id === $message->user_id) {
+                    return;
+                }
+
+                $channels = $this->messageChannelsFor($membership->user);
+
+                if ($channels === []) {
+                    return;
+                }
+
+                $membership->user->notify(new ImportantCampaignMessageNotification($message->load('campaign', 'user'), $channels));
+            });
     }
 
     protected function notifySessionMembers(CampaignSession $session, ?int $actorId, callable $factory): void
@@ -112,6 +135,25 @@ class NotificationService
         }
 
         if ($preference->email_sessions_enabled) {
+            $channels[] = 'mail';
+        }
+
+        return $channels;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function messageChannelsFor(User $user): array
+    {
+        $preference = $this->preferencesFor($user);
+        $channels = [];
+
+        if ($preference->in_app_messages_enabled) {
+            $channels[] = 'database';
+        }
+
+        if ($preference->email_messages_enabled) {
             $channels[] = 'mail';
         }
 

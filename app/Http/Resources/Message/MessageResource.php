@@ -16,6 +16,7 @@ class MessageResource extends JsonResource
             'id' => $this->id,
             'type' => $this->type?->value ?? $this->type,
             'content' => $this->content,
+            'is_important' => (bool) $this->is_important,
             'metadata' => $this->metadata ?? [],
             'session_id' => $this->session_id,
             'author' => new UserResource($this->whenLoaded('user')),

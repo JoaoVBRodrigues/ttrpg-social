@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\CampaignMemberRole;
 use App\Enums\CampaignMemberStatus;
 use App\Jobs\DispatchSessionNotificationJob;
+use App\Jobs\DispatchImportantMessageNotificationJob;
 use App\Jobs\SendCampaignInviteNotificationJob;
 use App\Jobs\SendCampaignMembershipReviewedNotificationJob;
 use App\Jobs\SendSessionReminderJob;
@@ -134,6 +135,26 @@ class CampaignNotificationTest extends TestCase
 
         Queue::assertPushed(SendCampaignMembershipReviewedNotificationJob::class, function (SendCampaignMembershipReviewedNotificationJob $job) use ($membership): bool {
             return $job->membershipId === $membership->id;
+        });
+    }
+
+    public function test_posting_an_important_message_dispatches_message_notification_job(): void
+    {
+        Queue::fake();
+
+        [$owner, $campaign] = $this->createManagedCampaign();
+
+        $response = $this->actingAs($owner)->post(route('campaigns.messages.store', $campaign), [
+            'content' => 'Please review the updated session safety notes.',
+            'is_important' => 1,
+        ]);
+
+        $response->assertRedirect(route('campaigns.show', $campaign));
+
+        $messageId = $campaign->messages()->where('content', 'Please review the updated session safety notes.')->value('id');
+
+        Queue::assertPushed(DispatchImportantMessageNotificationJob::class, function (DispatchImportantMessageNotificationJob $job) use ($messageId): bool {
+            return $job->messageId === $messageId;
         });
     }
 

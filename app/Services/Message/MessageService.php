@@ -5,6 +5,7 @@ namespace App\Services\Message;
 use App\Enums\CampaignMemberStatus;
 use App\Enums\MessageType;
 use App\Events\CampaignMessageCreated;
+use App\Events\ImportantCampaignMessageCreated;
 use App\Exceptions\DomainException;
 use App\Models\Campaign;
 use App\Models\Message;
@@ -24,10 +25,15 @@ class MessageService
                 'session_id' => $data['session_id'] ?? null,
                 'type' => MessageType::TEXT,
                 'content' => $data['content'],
+                'is_important' => (bool) ($data['is_important'] ?? false),
                 'metadata' => [],
             ]);
 
             CampaignMessageCreated::dispatch($message);
+
+            if ($message->is_important) {
+                ImportantCampaignMessageCreated::dispatch($message->load(['campaign', 'user']));
+            }
 
             return $message->load('user');
         });

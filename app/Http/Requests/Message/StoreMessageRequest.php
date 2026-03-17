@@ -16,6 +16,7 @@ class StoreMessageRequest extends FormRequest
         return [
             'content' => ['required', 'string', 'max:5000'],
             'session_id' => ['nullable', 'exists:campaign_sessions,id'],
+            'is_important' => ['nullable', 'boolean'],
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Enums\MessageType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Message extends Model
 {
@@ -17,6 +18,7 @@ class Message extends Model
         'session_id',
         'type',
         'content',
+        'is_important',
         'metadata',
         'edited_at',
     ];
@@ -25,6 +27,7 @@ class Message extends Model
     {
         return [
             'type' => MessageType::class,
+            'is_important' => 'boolean',
             'metadata' => 'array',
             'edited_at' => 'datetime',
         ];
@@ -43,5 +46,10 @@ class Message extends Model
     public function session(): BelongsTo
     {
         return $this->belongsTo(CampaignSession::class, 'session_id');
+    }
+
+    public function diceRoll(): HasOne
+    {
+        return $this->hasOne(DiceRoll::class);
     }
 }
