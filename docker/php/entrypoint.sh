@@ -1,0 +1,55 @@
+#!/usr/bin/env sh
+set -eu
+
+cd /var/www/html
+
+wait_for_service() {
+    host="$1"
+    port="$2"
+    name="$3"
+
+    if [ -z "$host" ] || [ -z "$port" ]; then
+        return 0
+    fi
+
+    attempts=0
+
+    until nc -z "$host" "$port" >/dev/null 2>&1; do
+        attempts=$((attempts + 1))
+
+        if [ "$attempts" -ge 30 ]; then
+            echo "Timed out waiting for ${name} at ${host}:${port}" >&2
+            exit 1
+        fi
+
+        echo "Waiting for ${name} at ${host}:${port}..."
+        sleep 2
+    done
+}
+
+mkdir -p \
+    bootstrap/cache \
+    storage/app/public \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/testing \
+    storage/framework/views \
+    storage/logs
+
+if [ ! -f .env ] && [ -f .env.example ]; then
+    cp .env.example .env
+fi
+
+if [ ! -f vendor/autoload.php ]; then
+    echo "Installing Composer dependencies..."
+    composer install --prefer-dist --no-interaction
+fi
+
+wait_for_service "${DB_HOST:-}" "${DB_PORT:-3306}" "database"
+wait_for_service "${REDIS_HOST:-}" "${REDIS_PORT:-6379}" "redis"
+
+if [ ! -L public/storage ] && [ ! -e public/storage ]; then
+    php artisan storage:link >/dev/null 2>&1 || true
+fi
+
+exec "$@"
