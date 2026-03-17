@@ -48,7 +48,7 @@ class CampaignController extends Controller
         ]);
     }
 
-    public function store(StoreCampaignRequest $request, CampaignService $service): RedirectResponse|CampaignResource
+    public function store(StoreCampaignRequest $request, CampaignService $service)
     {
         return $this->handleAction($request, function () use ($request, $service) {
             $campaign = $service->createCampaign($request->user(), $request->validated());
@@ -84,7 +84,7 @@ class CampaignController extends Controller
         ]);
     }
 
-    public function update(UpdateCampaignRequest $request, Campaign $campaign, CampaignService $service): RedirectResponse|CampaignResource
+    public function update(UpdateCampaignRequest $request, Campaign $campaign, CampaignService $service)
     {
         return $this->handleAction($request, function () use ($request, $campaign, $service) {
             $campaign = $service->updateCampaign($campaign, $request->validated());

@@ -72,6 +72,19 @@
                         @endforeach
                     </div>
                 </div>
+
+                <div class="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-medium text-slate-900">{{ __('Campaign chat') }}</h3>
+                            <p class="mt-1 text-sm text-slate-500">{{ __('Messages and dice rolls are persisted and broadcast to active members in realtime.') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <livewire:chat.campaign-chat :campaign="$campaign" />
+                    </div>
+                </div>
             </section>
 
             <aside class="space-y-6">
@@ -102,6 +115,34 @@
                 </div>
 
                 @auth
+                    @php($isActiveMember = auth()->user()->campaignMemberships()->where('campaign_id', $campaign->id)->where('status', 'active')->exists())
+
+                    @if($isActiveMember)
+                        <form method="POST" action="{{ route('campaigns.messages.store', $campaign) }}" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                            @csrf
+                            <h3 class="text-lg font-medium text-slate-900">{{ __('Post a message') }}</h3>
+                            <div class="mt-4">
+                                <x-input-label for="message_content" :value="__('Message')" />
+                                <textarea id="message_content" name="content" rows="4" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required></textarea>
+                            </div>
+                            <div class="mt-4">
+                                <x-primary-button>{{ __('Send message') }}</x-primary-button>
+                            </div>
+                        </form>
+
+                        <form method="POST" action="{{ route('campaigns.rolls.store', $campaign) }}" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                            @csrf
+                            <h3 class="text-lg font-medium text-slate-900">{{ __('Roll dice') }}</h3>
+                            <div class="mt-4">
+                                <x-input-label for="dice_expression" :value="__('Expression')" />
+                                <x-text-input id="dice_expression" name="expression" type="text" class="mt-1 block w-full" placeholder="1d20+4 or 1d20 adv" required />
+                            </div>
+                            <div class="mt-4">
+                                <x-primary-button>{{ __('Roll now') }}</x-primary-button>
+                            </div>
+                        </form>
+                    @endif
+
                     @can('requestJoin', $campaign)
                         <form method="POST" action="{{ route('campaigns.members.request', $campaign) }}" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                             @csrf

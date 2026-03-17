@@ -33,7 +33,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function update(UpdateProfileRequest $request, UserProfileService $service): RedirectResponse|UserResource
+    public function update(UpdateProfileRequest $request, UserProfileService $service)
     {
         return $this->handleAction($request, function () use ($request, $service) {
             $user = $service->updateProfile($request->user(), $request->validated())
@@ -49,7 +49,7 @@ class ProfileController extends Controller
         });
     }
 
-    public function updatePreferences(UpdateNotificationPreferenceRequest $request, UserProfileService $service): RedirectResponse|UserResource
+    public function updatePreferences(UpdateNotificationPreferenceRequest $request, UserProfileService $service)
     {
         return $this->handleAction($request, function () use ($request, $service) {
             $service->updateNotificationPreferences($request->user(), $request->validated());

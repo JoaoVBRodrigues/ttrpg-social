@@ -17,7 +17,7 @@ class CampaignSessionController extends Controller
 {
     use HandlesDomainExceptions;
 
-    public function store(StoreCampaignSessionRequest $request, Campaign $campaign, CampaignSessionService $service): RedirectResponse|CampaignSessionResource
+    public function store(StoreCampaignSessionRequest $request, Campaign $campaign, CampaignSessionService $service)
     {
         abort_unless($service->canManage($request->user(), $campaign), 403);
 
@@ -34,7 +34,7 @@ class CampaignSessionController extends Controller
         });
     }
 
-    public function update(UpdateCampaignSessionRequest $request, CampaignSession $campaignSession, CampaignSessionService $service): RedirectResponse|CampaignSessionResource
+    public function update(UpdateCampaignSessionRequest $request, CampaignSession $campaignSession, CampaignSessionService $service)
     {
         abort_unless($service->canManage($request->user(), $campaignSession->campaign), 403);
 

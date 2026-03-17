@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Web\CampaignController;
+use App\Http\Controllers\Web\CampaignDiceRollController;
 use App\Http\Controllers\Web\CampaignMembershipController;
+use App\Http\Controllers\Web\CampaignMessageController;
 use App\Http\Controllers\Web\CampaignSessionController;
 use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\SessionAttendanceController;
@@ -49,6 +51,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->name('campaigns.leave');
     Route::post('campaigns/{campaign:slug}/sessions', [CampaignSessionController::class, 'store'])
         ->name('campaign-sessions.store');
+    Route::post('campaigns/{campaign:slug}/messages', [CampaignMessageController::class, 'store'])
+        ->name('campaigns.messages.store');
+    Route::post('campaigns/{campaign:slug}/rolls', [CampaignDiceRollController::class, 'store'])
+        ->name('campaigns.rolls.store');
     Route::put('campaign-sessions/{campaignSession}', [CampaignSessionController::class, 'update'])
         ->name('campaign-sessions.update');
     Route::put('campaign-sessions/{campaignSession}/attendance', [SessionAttendanceController::class, 'update'])

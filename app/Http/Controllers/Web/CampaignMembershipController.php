@@ -16,7 +16,7 @@ class CampaignMembershipController extends Controller
 {
     use HandlesDomainExceptions;
 
-    public function requestJoin(Request $request, Campaign $campaign, CampaignMembershipService $service): RedirectResponse
+    public function requestJoin(Request $request, Campaign $campaign, CampaignMembershipService $service)
     {
         $this->authorize('requestJoin', $campaign);
 
@@ -29,7 +29,7 @@ class CampaignMembershipController extends Controller
         });
     }
 
-    public function invite(StoreCampaignInviteRequest $request, Campaign $campaign, CampaignMembershipService $service): RedirectResponse
+    public function invite(StoreCampaignInviteRequest $request, Campaign $campaign, CampaignMembershipService $service)
     {
         $this->authorize('manageMembers', $campaign);
 
@@ -47,7 +47,7 @@ class CampaignMembershipController extends Controller
         });
     }
 
-    public function review(ReviewCampaignMemberRequest $request, CampaignMember $membership, CampaignMembershipService $service): RedirectResponse
+    public function review(ReviewCampaignMemberRequest $request, CampaignMember $membership, CampaignMembershipService $service)
     {
         $campaign = $membership->campaign;
         $this->authorize('manageMembers', $campaign);
@@ -61,7 +61,7 @@ class CampaignMembershipController extends Controller
         });
     }
 
-    public function remove(Request $request, CampaignMember $membership, CampaignMembershipService $service): RedirectResponse
+    public function remove(Request $request, CampaignMember $membership, CampaignMembershipService $service)
     {
         $campaign = $membership->campaign;
         $this->authorize('manageMembers', $campaign);
@@ -75,7 +75,7 @@ class CampaignMembershipController extends Controller
         });
     }
 
-    public function leave(Request $request, Campaign $campaign, CampaignMembershipService $service): RedirectResponse
+    public function leave(Request $request, Campaign $campaign, CampaignMembershipService $service)
     {
         return $this->handleAction($request, function () use ($request, $campaign, $service) {
             $service->leaveCampaign($request->user(), $campaign);

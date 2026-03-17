@@ -13,7 +13,7 @@ class SessionAttendanceController extends Controller
 {
     use HandlesDomainExceptions;
 
-    public function update(RespondSessionAttendanceRequest $request, CampaignSession $campaignSession, SessionAttendanceService $service): RedirectResponse
+    public function update(RespondSessionAttendanceRequest $request, CampaignSession $campaignSession, SessionAttendanceService $service)
     {
         return $this->handleAction($request, function () use ($request, $campaignSession, $service) {
             $service->respond($request->user(), $campaignSession, $request->validated());
