@@ -4,6 +4,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
@@ -27,12 +28,46 @@ new #[Layout('layouts.guest')] class extends Component
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
+        $validated['username'] = $this->generateUsername($validated['name'], $validated['email']);
 
         event(new Registered($user = User::create($validated)));
 
         Auth::login($user);
 
         $this->redirect(route('dashboard', absolute: false), navigate: true);
+    }
+
+    protected function generateUsername(string $name, string $email): string
+    {
+        $base = Str::of($name)
+            ->ascii()
+            ->lower()
+            ->replaceMatches('/[^a-z0-9]+/', '_')
+            ->trim('_')
+            ->value();
+
+        if ($base === '') {
+            $base = Str::of(Str::before($email, '@'))
+                ->ascii()
+                ->lower()
+                ->replaceMatches('/[^a-z0-9]+/', '_')
+                ->trim('_')
+                ->value();
+        }
+
+        $base = $base !== '' ? $base : 'player';
+        $base = substr($base, 0, 40);
+
+        $username = $base;
+        $suffix = 1;
+
+        while (User::query()->where('username', $username)->exists()) {
+            $suffixText = '_'.$suffix;
+            $username = substr($base, 0, 40 - strlen($suffixText)).$suffixText;
+            $suffix++;
+        }
+
+        return $username;
     }
 }; ?>
 

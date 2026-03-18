@@ -25,6 +25,19 @@ class ProfileTest extends TestCase
             ->assertSeeVolt('profile.delete-user-form');
     }
 
+    public function test_profile_page_is_displayed_even_without_a_username(): void
+    {
+        $user = User::factory()->create([
+            'username' => null,
+        ]);
+
+        $response = $this->actingAs($user)->get('/profile');
+
+        $response
+            ->assertOk()
+            ->assertSee('Choose a username below to enable your public profile link.');
+    }
+
     public function test_profile_information_can_be_updated(): void
     {
         $user = User::factory()->create();

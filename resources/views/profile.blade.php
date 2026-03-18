@@ -9,12 +9,18 @@
                     {{ __('Manage your public identity, TTRPG preferences, and notification settings.') }}
                 </p>
             </div>
-            <a
-                href="{{ route('profile.public', $user) }}"
-                class="inline-flex items-center rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-            >
-                {{ __('View public profile') }}
-            </a>
+            @if (filled($user->username))
+                <a
+                    href="{{ route('profile.public', ['user' => $user]) }}"
+                    class="inline-flex items-center rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                >
+                    {{ __('View public profile') }}
+                </a>
+            @else
+                <p class="max-w-xs text-sm text-slate-500">
+                    {{ __('Choose a username below to enable your public profile link.') }}
+                </p>
+            @endif
         </div>
     </x-slot>
 

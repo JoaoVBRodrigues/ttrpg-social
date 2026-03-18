@@ -70,6 +70,15 @@
                         <dd class="mt-1">{{ $campaign->frequency_label ?: __('Flexible') }}</dd>
                     </div>
                 </dl>
+
+                <div class="mt-6 flex items-center justify-end">
+                    <a
+                        href="{{ route('campaigns.show', $campaign) }}"
+                        class="inline-flex items-center rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                    >
+                        {{ __('View campaign') }}
+                    </a>
+                </div>
             </article>
         @empty
             <div class="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-sm text-slate-500 md:col-span-2 xl:col-span-3">

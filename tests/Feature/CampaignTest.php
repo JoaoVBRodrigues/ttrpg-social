@@ -92,6 +92,22 @@ class CampaignTest extends TestCase
             ->assertJsonPath('data.0.title', 'Open DND Table');
     }
 
+    public function test_campaign_index_page_shows_a_view_campaign_button(): void
+    {
+        $campaign = Campaign::factory()->create([
+            'title' => 'Open DND Table',
+            'visibility' => CampaignVisibility::PUBLIC,
+            'status' => CampaignStatus::OPEN,
+        ]);
+
+        $response = $this->get('/campaigns');
+
+        $response
+            ->assertOk()
+            ->assertSee('View campaign')
+            ->assertSee(route('campaigns.show', $campaign), false);
+    }
+
     public function test_user_can_request_to_join_a_public_campaign(): void
     {
         $campaign = Campaign::factory()->create([
