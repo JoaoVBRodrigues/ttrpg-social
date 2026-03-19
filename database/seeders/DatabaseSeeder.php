@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,12 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             GameSystemSeeder::class,
-        ]);
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'username' => 'testuser',
-            'email' => 'test@example.com',
+            ManualQaSeeder::class,
         ]);
     }
 }
