@@ -69,9 +69,9 @@ class CampaignMembershipService
         });
     }
 
-    public function reviewMembership(CampaignMember $membership, string $status): CampaignMember
+    public function reviewMembership(CampaignMember $membership, string $status, ?string $message = null): CampaignMember
     {
-        return DB::transaction(function () use ($membership, $status): CampaignMember {
+        return DB::transaction(function () use ($membership, $status, $message): CampaignMember {
             $shouldNotify = $membership->status?->value !== $status
                 && in_array($status, [
                     CampaignMemberStatus::ACTIVE->value,
@@ -79,9 +79,15 @@ class CampaignMembershipService
                 ], true);
 
             $membership->status = $status;
+            $membership->reviewed_at = now();
 
             if ($status === CampaignMemberStatus::ACTIVE->value) {
                 $membership->joined_at = now();
+                $membership->review_message = null;
+            }
+
+            if ($status === CampaignMemberStatus::REJECTED->value) {
+                $membership->review_message = blank($message) ? null : $message;
             }
 
             $membership->save();

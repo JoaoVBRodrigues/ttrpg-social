@@ -28,6 +28,8 @@ class ManualQaSeeder extends Seeder
 
     public function run(): void
     {
+        $this->call(GameSystemSeeder::class);
+
         $system = GameSystem::query()->where('slug', 'dnd-5e')->firstOrFail();
 
         $gm = User::query()->updateOrCreate(

@@ -78,7 +78,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Campaign::class, 'campaign_members')
             ->using(CampaignMember::class)
-            ->withPivot(['id', 'role', 'status', 'joined_at', 'invited_by'])
+            ->withPivot(['id', 'role', 'status', 'joined_at', 'invited_by', 'review_message', 'reviewed_at'])
             ->withTimestamps();
     }
 

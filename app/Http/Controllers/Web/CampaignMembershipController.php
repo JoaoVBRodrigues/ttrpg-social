@@ -53,7 +53,11 @@ class CampaignMembershipController extends Controller
         $this->authorize('manageMembers', $campaign);
 
         return $this->handleAction($request, function () use ($request, $membership, $campaign, $service) {
-            $service->reviewMembership($membership, $request->validated('status'));
+            $service->reviewMembership(
+                $membership,
+                $request->validated('status'),
+                $request->validated('message'),
+            );
 
             return redirect()
                 ->route('campaigns.show', $campaign)

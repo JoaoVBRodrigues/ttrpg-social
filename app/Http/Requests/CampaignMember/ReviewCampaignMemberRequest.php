@@ -16,6 +16,7 @@ class ReviewCampaignMemberRequest extends FormRequest
     {
         return [
             'status' => ['required', Rule::in(['active', 'rejected'])],
+            'message' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

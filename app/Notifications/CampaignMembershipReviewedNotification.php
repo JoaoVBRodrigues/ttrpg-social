@@ -34,15 +34,22 @@ class CampaignMembershipReviewedNotification extends Notification implements Sho
             'campaign_title' => $this->membership->campaign->title,
             'status' => $this->membership->status->value,
             'message' => $this->messageText(),
+            'review_message' => $this->membership->review_message,
         ];
     }
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        $mail = (new MailMessage)
             ->subject('Campaign request updated')
             ->line($this->messageText())
             ->action('View campaign', route('campaigns.show', $this->membership->campaign));
+
+        if ($this->membership->status === CampaignMemberStatus::REJECTED && $this->membership->review_message) {
+            $mail->line("GM note: {$this->membership->review_message}");
+        }
+
+        return $mail;
     }
 
     protected function messageText(): string

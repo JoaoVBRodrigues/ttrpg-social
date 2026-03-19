@@ -128,6 +128,139 @@ class CampaignTest extends TestCase
         ]);
     }
 
+    public function test_requesting_user_can_see_pending_status_on_campaign_page(): void
+    {
+        $campaign = Campaign::factory()->create([
+            'visibility' => CampaignVisibility::PUBLIC,
+            'status' => CampaignStatus::OPEN,
+        ]);
+        $user = User::factory()->create();
+
+        $campaign->members()->create([
+            'user_id' => $user->id,
+            'role' => CampaignMemberRole::PLAYER,
+            'status' => CampaignMemberStatus::PENDING,
+        ]);
+
+        $response = $this->actingAs($user)->get(route('campaigns.show', $campaign));
+
+        $response
+            ->assertOk()
+            ->assertSee('Join request pending');
+    }
+
+    public function test_gm_can_approve_a_join_request(): void
+    {
+        $owner = User::factory()->create();
+        $requester = User::factory()->create();
+        $campaign = Campaign::factory()->create([
+            'owner_id' => $owner->id,
+            'visibility' => CampaignVisibility::PUBLIC,
+        ]);
+
+        $campaign->members()->create([
+            'user_id' => $owner->id,
+            'role' => CampaignMemberRole::GM,
+            'status' => CampaignMemberStatus::ACTIVE,
+            'joined_at' => now(),
+        ]);
+
+        $membership = $campaign->members()->create([
+            'user_id' => $requester->id,
+            'role' => CampaignMemberRole::PLAYER,
+            'status' => CampaignMemberStatus::PENDING,
+        ]);
+
+        $response = $this->actingAs($owner)->patch(route('campaign-members.review', $membership), [
+            'status' => CampaignMemberStatus::ACTIVE->value,
+        ]);
+
+        $response->assertRedirect(route('campaigns.show', $campaign));
+
+        $this->assertDatabaseHas('campaign_members', [
+            'id' => $membership->id,
+            'status' => CampaignMemberStatus::ACTIVE->value,
+        ]);
+    }
+
+    public function test_gm_can_deny_a_join_request_with_a_reason(): void
+    {
+        $owner = User::factory()->create();
+        $requester = User::factory()->create();
+        $campaign = Campaign::factory()->create([
+            'owner_id' => $owner->id,
+            'visibility' => CampaignVisibility::PUBLIC,
+        ]);
+
+        $campaign->members()->create([
+            'user_id' => $owner->id,
+            'role' => CampaignMemberRole::GM,
+            'status' => CampaignMemberStatus::ACTIVE,
+            'joined_at' => now(),
+        ]);
+
+        $membership = $campaign->members()->create([
+            'user_id' => $requester->id,
+            'role' => CampaignMemberRole::PLAYER,
+            'status' => CampaignMemberStatus::PENDING,
+        ]);
+
+        $response = $this->actingAs($owner)->patch(route('campaign-members.review', $membership), [
+            'status' => CampaignMemberStatus::REJECTED->value,
+            'message' => 'We already filled the final seat for this arc.',
+        ]);
+
+        $response->assertRedirect(route('campaigns.show', $campaign));
+
+        $this->assertDatabaseHas('campaign_members', [
+            'id' => $membership->id,
+            'status' => CampaignMemberStatus::REJECTED->value,
+            'review_message' => 'We already filled the final seat for this arc.',
+        ]);
+
+        $this->actingAs($requester)
+            ->get(route('campaigns.show', $campaign))
+            ->assertOk()
+            ->assertSee('Join request declined')
+            ->assertSee('We already filled the final seat for this arc.');
+    }
+
+    public function test_pending_join_request_panel_is_only_visible_to_campaign_managers(): void
+    {
+        $owner = User::factory()->create();
+        $outsider = User::factory()->create();
+        $requester = User::factory()->create();
+        $campaign = Campaign::factory()->create([
+            'owner_id' => $owner->id,
+            'visibility' => CampaignVisibility::PUBLIC,
+        ]);
+
+        $campaign->members()->create([
+            'user_id' => $owner->id,
+            'role' => CampaignMemberRole::GM,
+            'status' => CampaignMemberStatus::ACTIVE,
+            'joined_at' => now(),
+        ]);
+
+        $campaign->members()->create([
+            'user_id' => $requester->id,
+            'role' => CampaignMemberRole::PLAYER,
+            'status' => CampaignMemberStatus::PENDING,
+        ]);
+
+        $this->actingAs($owner)
+            ->get(route('campaigns.show', $campaign))
+            ->assertOk()
+            ->assertSee('Pending join requests')
+            ->assertSee('@'.$requester->username);
+
+        $this->actingAs($outsider)
+            ->get(route('campaigns.show', $campaign))
+            ->assertOk()
+            ->assertDontSee('Pending join requests')
+            ->assertDontSee('@'.$requester->username);
+    }
+
     public function test_gm_can_invite_and_approve_a_member(): void
     {
         $owner = User::factory()->create();

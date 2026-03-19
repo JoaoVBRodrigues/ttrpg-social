@@ -23,6 +23,8 @@ class CampaignMember extends Pivot
         'status',
         'joined_at',
         'invited_by',
+        'review_message',
+        'reviewed_at',
     ];
 
     protected function casts(): array
@@ -31,6 +33,7 @@ class CampaignMember extends Pivot
             'role' => CampaignMemberRole::class,
             'status' => CampaignMemberStatus::class,
             'joined_at' => 'datetime',
+            'reviewed_at' => 'datetime',
         ];
     }
 
