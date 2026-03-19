@@ -1,20 +1,47 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        <div class="flex items-center justify-between gap-4">
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('Tabletop control center') }}</p>
+                <h2 class="mt-3 font-display text-3xl leading-tight">
+                    {{ __('Dashboard') }}
+                </h2>
+                <p class="mt-2 max-w-2xl text-sm leading-7" style="color: var(--app-text-muted);">
+                    {{ __('Track your tables, keep your next session moving, and jump straight into campaign work.') }}
+                </p>
+            </div>
+            <a href="{{ route('campaigns.create') }}" class="accent-button inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold transition">
+                {{ __('Create campaign') }}
+            </a>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 space-y-3">
-                    <p>{{ __("You're logged in and ready to organize your next table.") }}</p>
-                    <a href="{{ route('campaigns.index') }}" class="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700">
-                        {{ __('Browse campaigns') }}
-                    </a>
+    <div class="page-shell">
+        <div class="page-stack mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <section class="grid gap-6 lg:grid-cols-[1.2fr,0.8fr]">
+                <div class="page-card">
+                    <span class="page-chip">{{ __('Ready for session zero') }}</span>
+                    <p class="mt-5 max-w-2xl text-base leading-8" style="color: var(--app-text-muted);">
+                        {{ __("You're logged in and ready to organize your next table.") }}
+                    </p>
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <a href="{{ route('campaigns.index') }}" class="accent-button inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold transition">
+                            {{ __('Browse campaigns') }}
+                        </a>
+                        <a href="{{ route('campaigns.mine') }}" class="page-outline-button">
+                            {{ __('My Campaigns') }}
+                        </a>
+                    </div>
                 </div>
-            </div>
+
+                <div class="page-card-soft">
+                    <p class="text-sm font-semibold uppercase tracking-[0.28em] text-amber-500">{{ __('Quick route') }}</p>
+                    <div class="mt-5 space-y-4 text-sm leading-7" style="color: var(--app-text-muted);">
+                        <p>{{ __('Browse public tables to discover new groups, or head to My Campaigns to manage the tables you already run.') }}</p>
+                        <p>{{ __('From any campaign room you can review join requests, schedule sessions, update the compendium, chat in realtime, and roll dice.') }}</p>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 </x-app-layout>

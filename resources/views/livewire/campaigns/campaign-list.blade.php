@@ -1,5 +1,5 @@
 <div class="space-y-6">
-    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="page-card">
         <div class="grid gap-4 md:grid-cols-5">
             <div class="md:col-span-2">
                 <x-input-label for="search" :value="__('Search')" />
@@ -8,7 +8,7 @@
 
             <div>
                 <x-input-label for="status" :value="__('Status')" />
-                <select id="status" wire:model.live="status" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                <select id="status" wire:model.live="status" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">
                     <option value="">{{ __('Any') }}</option>
                     @foreach(['open', 'full', 'ongoing', 'paused', 'finished'] as $value)
                         <option value="{{ $value }}">{{ ucfirst($value) }}</option>
@@ -18,7 +18,7 @@
 
             <div>
                 <x-input-label for="system" :value="__('System')" />
-                <select id="system" wire:model.live="system" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                <select id="system" wire:model.live="system" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">
                     <option value="">{{ __('Any') }}</option>
                     @foreach($gameSystems as $systemOption)
                         <option value="{{ $systemOption->slug }}">{{ $systemOption->name }}</option>
@@ -27,8 +27,8 @@
             </div>
 
             <div class="flex items-end">
-                <label class="flex items-center gap-3 text-sm text-slate-600">
-                    <input type="checkbox" wire:model.live="openOnly" class="rounded border-slate-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                <label class="flex items-center gap-3 text-sm" style="color: var(--app-text-muted);">
+                    <input type="checkbox" wire:model.live="openOnly" class="checkbox-accent rounded shadow-sm">
                     {{ __('Only open campaigns') }}
                 </label>
             </div>
@@ -37,36 +37,36 @@
 
     <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         @forelse($campaigns as $campaign)
-            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <article class="page-card">
                 <div class="flex items-start justify-between gap-4">
                     <div>
-                        <p class="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">{{ $campaign->gameSystem->name }}</p>
-                        <h3 class="mt-2 text-xl font-semibold text-slate-900">
-                            <a href="{{ route('campaigns.show', $campaign) }}" class="transition hover:text-indigo-600">
+                        <p class="text-xs font-medium uppercase tracking-[0.2em]" style="color: var(--app-text-muted);">{{ $campaign->gameSystem->name }}</p>
+                        <h3 class="mt-2 font-display text-2xl">
+                            <a href="{{ route('campaigns.show', $campaign) }}" class="page-link transition">
                                 {{ $campaign->title }}
                             </a>
                         </h3>
                     </div>
-                    <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">{{ ucfirst($campaign->status->value) }}</span>
+                    <span class="page-chip">{{ ucfirst($campaign->status->value) }}</span>
                 </div>
 
-                <p class="mt-4 text-sm leading-6 text-slate-600">{{ $campaign->synopsis }}</p>
+                <p class="mt-4 text-sm leading-7" style="color: var(--app-text-muted);">{{ $campaign->synopsis }}</p>
 
-                <dl class="mt-6 grid grid-cols-2 gap-4 text-sm text-slate-600">
+                <dl class="mt-6 grid grid-cols-2 gap-4 text-sm" style="color: var(--app-text-muted);">
                     <div>
-                        <dt class="font-medium text-slate-900">{{ __('GM') }}</dt>
+                        <dt class="font-medium" style="color: var(--app-text);">{{ __('GM') }}</dt>
                         <dd class="mt-1">{{ $campaign->owner->name }}</dd>
                     </div>
                     <div>
-                        <dt class="font-medium text-slate-900">{{ __('Players') }}</dt>
+                        <dt class="font-medium" style="color: var(--app-text);">{{ __('Players') }}</dt>
                         <dd class="mt-1">{{ $campaign->members_count }} / {{ $campaign->max_players }}</dd>
                     </div>
                     <div>
-                        <dt class="font-medium text-slate-900">{{ __('Timezone') }}</dt>
+                        <dt class="font-medium" style="color: var(--app-text);">{{ __('Timezone') }}</dt>
                         <dd class="mt-1">{{ $campaign->timezone }}</dd>
                     </div>
                     <div>
-                        <dt class="font-medium text-slate-900">{{ __('Frequency') }}</dt>
+                        <dt class="font-medium" style="color: var(--app-text);">{{ __('Frequency') }}</dt>
                         <dd class="mt-1">{{ $campaign->frequency_label ?: __('Flexible') }}</dd>
                     </div>
                 </dl>
@@ -74,14 +74,14 @@
                 <div class="mt-6 flex items-center justify-end">
                     <a
                         href="{{ route('campaigns.show', $campaign) }}"
-                        class="inline-flex items-center rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                        class="page-outline-button"
                     >
                         {{ __('View campaign') }}
                     </a>
                 </div>
             </article>
         @empty
-            <div class="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-sm text-slate-500 md:col-span-2 xl:col-span-3">
+            <div class="page-card-soft border-dashed text-sm md:col-span-2 xl:col-span-3" style="color: var(--app-text-muted);">
                 {{ __('No campaigns matched your filters.') }}
             </div>
         @endforelse

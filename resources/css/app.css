@@ -69,12 +69,18 @@
         content: '';
         position: absolute;
         inset: 0;
+        z-index: 0;
         background-image:
             linear-gradient(rgba(139, 94, 52, 0.05) 1px, transparent 1px),
             linear-gradient(90deg, rgba(139, 94, 52, 0.05) 1px, transparent 1px);
         background-size: 56px 56px;
         mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 85%);
         pointer-events: none;
+    }
+
+    .app-shell > * {
+        position: relative;
+        z-index: 1;
     }
 
     .surface-panel {
@@ -105,5 +111,87 @@
 
     .accent-button:hover {
         filter: brightness(1.04);
+    }
+
+    .page-shell {
+        @apply relative overflow-hidden py-10 sm:py-12;
+    }
+
+    .page-shell::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at top right, rgba(183, 121, 31, 0.12), transparent 22%),
+            radial-gradient(circle at bottom left, rgba(139, 94, 52, 0.08), transparent 24%);
+        pointer-events: none;
+    }
+
+    .page-stack {
+        @apply relative z-10 space-y-6;
+    }
+
+    .page-card {
+        @apply surface-panel rounded-[2rem] p-6 sm:p-8;
+    }
+
+    .page-card-soft {
+        @apply rounded-[2rem] p-6 sm:p-8;
+        background: color-mix(in srgb, var(--app-surface) 72%, transparent);
+        border: 1px solid color-mix(in srgb, var(--app-border) 88%, transparent);
+        box-shadow: var(--app-shadow);
+        backdrop-filter: blur(18px);
+    }
+
+    .page-card-strong {
+        @apply surface-panel-strong rounded-[2rem] p-6 sm:p-8;
+    }
+
+    .page-chip {
+        @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em];
+        background: color-mix(in srgb, var(--app-accent) 16%, transparent);
+        color: var(--app-accent);
+        border: 1px solid color-mix(in srgb, var(--app-accent) 24%, transparent);
+    }
+
+    .page-outline-button {
+        @apply inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold transition;
+        color: var(--app-text);
+        border: 1px solid color-mix(in srgb, var(--app-border) 96%, transparent);
+        background: color-mix(in srgb, var(--app-surface-strong) 72%, transparent);
+    }
+
+    .page-outline-button:hover {
+        border-color: color-mix(in srgb, var(--app-accent) 38%, var(--app-border));
+        color: var(--app-text);
+    }
+
+    .page-link {
+        color: var(--app-accent);
+    }
+
+    .page-link:hover {
+        color: var(--app-accent-strong);
+    }
+
+    .form-surface {
+        background: color-mix(in srgb, var(--app-surface-strong) 76%, transparent);
+        border: 1px solid color-mix(in srgb, var(--app-border) 96%, transparent);
+        color: var(--app-text);
+    }
+
+    .form-surface::placeholder {
+        color: var(--app-text-muted);
+        opacity: 0.8;
+    }
+
+    .checkbox-accent {
+        color: var(--app-accent);
+        border-color: color-mix(in srgb, var(--app-border) 100%, transparent);
+    }
+
+    .checkbox-accent:focus {
+        --tw-ring-color: color-mix(in srgb, var(--app-accent) 38%, transparent);
+        border-color: color-mix(in srgb, var(--app-accent) 42%, transparent);
     }
 }

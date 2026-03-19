@@ -1,11 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Create campaign') }}</h2>
+        <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('Build your table') }}</p>
+            <h2 class="mt-3 font-display text-3xl leading-tight">{{ __('Create campaign') }}</h2>
+            <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('Set the tone, the system, and the table expectations before your first session.') }}</p>
+        </div>
     </x-slot>
 
-    <div class="py-10">
-        <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+    <div class="page-shell">
+        <div class="page-stack mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+            <div class="page-card">
                 @include('campaigns._form')
             </div>
         </div>

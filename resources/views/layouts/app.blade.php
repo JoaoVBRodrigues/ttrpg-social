@@ -30,7 +30,7 @@
 
             <!-- Page Heading -->
             @if (isset($header))
-                <header class="border-b border-white/10 bg-white/40 backdrop-blur dark:border-white/5 dark:bg-slate-950/45">
+                <header class="relative z-20 border-b border-white/10 bg-white/40 backdrop-blur dark:border-white/5 dark:bg-slate-950/45">
                     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>

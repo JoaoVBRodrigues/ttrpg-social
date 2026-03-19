@@ -2,19 +2,20 @@
     <x-slot name="header">
         <div class="flex items-center justify-between gap-4">
             <div>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('My Campaigns') }}</h2>
-                <p class="mt-1 text-sm text-gray-500">{{ __('Campaigns you run or actively belong to appear here.') }}</p>
+                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('Your active tables') }}</p>
+                <h2 class="mt-3 font-display text-3xl leading-tight">{{ __('My Campaigns') }}</h2>
+                <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('Campaigns you run or actively belong to appear here.') }}</p>
             </div>
 
-            <a href="{{ route('campaigns.create') }}" class="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700">
+            <a href="{{ route('campaigns.create') }}" class="accent-button inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold transition">
                 {{ __('Create campaign') }}
             </a>
         </div>
     </x-slot>
 
-    <div class="py-10">
-        <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-            <form method="GET" action="{{ route('campaigns.mine') }}" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="page-shell">
+        <div class="page-stack mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <form method="GET" action="{{ route('campaigns.mine') }}" class="page-card">
                 <div class="grid gap-4 md:grid-cols-4">
                     <div class="md:col-span-3">
                         <x-input-label for="my_campaigns_search" :value="__('Search')" />
@@ -23,7 +24,7 @@
 
                     <div>
                         <x-input-label for="my_campaigns_status" :value="__('Status')" />
-                        <select id="my_campaigns_status" name="status" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <select id="my_campaigns_status" name="status" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">
                             <option value="">{{ __('Any') }}</option>
                             @foreach(['open', 'full', 'ongoing', 'paused', 'finished'] as $value)
                                 <option value="{{ $value }}" @selected($filters['status'] === $value)>{{ ucfirst($value) }}</option>
@@ -34,7 +35,7 @@
 
                 <div class="mt-4 flex items-center justify-end gap-3">
                     @if($filters['search'] || $filters['status'])
-                        <a href="{{ route('campaigns.mine') }}" class="text-sm font-medium text-slate-600 transition hover:text-slate-900">
+                        <a href="{{ route('campaigns.mine') }}" class="page-link text-sm font-medium transition">
                             {{ __('Clear filters') }}
                         </a>
                     @endif
@@ -45,48 +46,48 @@
 
             <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                 @forelse($campaigns as $campaign)
-                    <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <article class="page-card">
                         <div class="flex items-start justify-between gap-4">
                             <div>
-                                <p class="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">{{ $campaign->gameSystem->name }}</p>
-                                <h3 class="mt-2 text-xl font-semibold text-slate-900">
-                                    <a href="{{ route('campaigns.show', $campaign) }}" class="transition hover:text-indigo-600">
+                                <p class="text-xs font-medium uppercase tracking-[0.2em]" style="color: var(--app-text-muted);">{{ $campaign->gameSystem->name }}</p>
+                                <h3 class="mt-2 font-display text-2xl">
+                                    <a href="{{ route('campaigns.show', $campaign) }}" class="page-link transition">
                                         {{ $campaign->title }}
                                     </a>
                                 </h3>
                             </div>
-                            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">{{ ucfirst($campaign->status->value) }}</span>
+                            <span class="page-chip">{{ ucfirst($campaign->status->value) }}</span>
                         </div>
 
-                        <p class="mt-4 text-sm leading-6 text-slate-600">{{ $campaign->synopsis }}</p>
+                        <p class="mt-4 text-sm leading-7" style="color: var(--app-text-muted);">{{ $campaign->synopsis }}</p>
 
-                        <dl class="mt-6 grid grid-cols-2 gap-4 text-sm text-slate-600">
+                        <dl class="mt-6 grid grid-cols-2 gap-4 text-sm" style="color: var(--app-text-muted);">
                             <div>
-                                <dt class="font-medium text-slate-900">{{ __('GM') }}</dt>
+                                <dt class="font-medium" style="color: var(--app-text);">{{ __('GM') }}</dt>
                                 <dd class="mt-1">{{ $campaign->owner->name }}</dd>
                             </div>
                             <div>
-                                <dt class="font-medium text-slate-900">{{ __('Players') }}</dt>
+                                <dt class="font-medium" style="color: var(--app-text);">{{ __('Players') }}</dt>
                                 <dd class="mt-1">{{ $campaign->active_members_count }} / {{ $campaign->max_players }}</dd>
                             </div>
                             <div>
-                                <dt class="font-medium text-slate-900">{{ __('Timezone') }}</dt>
+                                <dt class="font-medium" style="color: var(--app-text);">{{ __('Timezone') }}</dt>
                                 <dd class="mt-1">{{ $campaign->timezone }}</dd>
                             </div>
                             <div>
-                                <dt class="font-medium text-slate-900">{{ __('Role here') }}</dt>
+                                <dt class="font-medium" style="color: var(--app-text);">{{ __('Role here') }}</dt>
                                 <dd class="mt-1">{{ $campaign->owner_id === auth()->id() ? __('GM') : __('Player') }}</dd>
                             </div>
                         </dl>
 
                         <div class="mt-6 flex items-center justify-end">
-                            <a href="{{ route('campaigns.show', $campaign) }}" class="inline-flex items-center rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900">
+                            <a href="{{ route('campaigns.show', $campaign) }}" class="page-outline-button">
                                 {{ __('Open table') }}
                             </a>
                         </div>
                     </article>
                 @empty
-                    <div class="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-sm text-slate-500 md:col-span-2 xl:col-span-3">
+                    <div class="page-card-soft border-dashed text-sm md:col-span-2 xl:col-span-3" style="color: var(--app-text-muted);">
                         {{ __('You do not belong to any campaigns yet.') }}
                     </div>
                 @endforelse

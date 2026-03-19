@@ -16,7 +16,7 @@ new class extends Component
     }
 }; ?>
 
-<nav x-data="{ open: false }" class="border-b border-white/10 bg-white/50 backdrop-blur dark:border-white/5 dark:bg-slate-950/50">
+<nav x-data="{ open: false }" class="relative z-[80] overflow-visible border-b border-white/10 bg-white/50 backdrop-blur dark:border-white/5 dark:bg-slate-950/50">
     <!-- Primary Navigation Menu -->
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-20 justify-between">
@@ -49,7 +49,7 @@ new class extends Component
             </div>
 
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:gap-3 sm:ms-6">
+            <div class="relative z-[90] hidden sm:ms-6 sm:flex sm:items-center sm:gap-3">
                 <x-locale-switcher />
                 <x-theme-toggle />
 
@@ -104,7 +104,7 @@ new class extends Component
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+    <div :class="{'block': open, 'hidden': ! open}" class="relative z-[70] hidden sm:hidden">
         <div class="space-y-1 px-4 pb-3 pt-2">
             <div class="flex items-center justify-between rounded-2xl border border-white/10 bg-white/40 px-4 py-3 dark:bg-slate-900/60">
                 <x-locale-switcher />

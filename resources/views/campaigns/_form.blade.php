@@ -6,6 +6,11 @@
         @method('PUT')
     @endif
 
+    <div class="page-card-soft">
+        <p class="text-sm font-semibold uppercase tracking-[0.28em] text-amber-500">{{ __('Campaign identity') }}</p>
+        <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('Describe the story, the system, and the logistics so the right players know what to expect.') }}</p>
+    </div>
+
     <div class="grid gap-6 md:grid-cols-2">
         <div>
             <x-input-label for="title" :value="__('Title')" />
@@ -15,7 +20,7 @@
 
         <div>
             <x-input-label for="game_system_id" :value="__('Game system')" />
-            <select id="game_system_id" name="game_system_id" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+            <select id="game_system_id" name="game_system_id" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30" required>
                 @foreach($gameSystems as $system)
                     <option value="{{ $system->id }}" @selected((string) old('game_system_id', $campaign->game_system_id ?? '') === (string) $system->id)>{{ $system->name }}</option>
                 @endforeach
@@ -25,18 +30,18 @@
 
         <div class="md:col-span-2">
             <x-input-label for="synopsis" :value="__('Synopsis')" />
-            <textarea id="synopsis" name="synopsis" rows="3" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>{{ old('synopsis', $campaign->synopsis ?? '') }}</textarea>
+            <textarea id="synopsis" name="synopsis" rows="3" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30" required>{{ old('synopsis', $campaign->synopsis ?? '') }}</textarea>
             <x-input-error class="mt-2" :messages="$errors->get('synopsis')" />
         </div>
 
         <div class="md:col-span-2">
             <x-input-label for="description" :value="__('Description')" />
-            <textarea id="description" name="description" rows="5" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description', $campaign->description ?? '') }}</textarea>
+            <textarea id="description" name="description" rows="5" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">{{ old('description', $campaign->description ?? '') }}</textarea>
         </div>
 
         <div class="md:col-span-2">
             <x-input-label for="rules_summary" :value="__('House rules / summary')" />
-            <textarea id="rules_summary" name="rules_summary" rows="4" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('rules_summary', $campaign->rules_summary ?? '') }}</textarea>
+            <textarea id="rules_summary" name="rules_summary" rows="4" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">{{ old('rules_summary', $campaign->rules_summary ?? '') }}</textarea>
         </div>
 
         <div>
@@ -46,7 +51,7 @@
 
         <div>
             <x-input-label for="visibility" :value="__('Visibility')" />
-            <select id="visibility" name="visibility" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+            <select id="visibility" name="visibility" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30" required>
                 @foreach(['public' => 'Public', 'unlisted' => 'Unlisted', 'private' => 'Private'] as $value => $label)
                     <option value="{{ $value }}" @selected(old('visibility', $campaign->visibility->value ?? 'public') === $value)>{{ __($label) }}</option>
                 @endforeach
@@ -55,7 +60,7 @@
 
         <div>
             <x-input-label for="status" :value="__('Status')" />
-            <select id="status" name="status" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            <select id="status" name="status" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">
                 @foreach(['draft' => 'Draft', 'open' => 'Open', 'full' => 'Full', 'ongoing' => 'Ongoing', 'paused' => 'Paused', 'finished' => 'Finished', 'archived' => 'Archived'] as $value => $label)
                     <option value="{{ $value }}" @selected(old('status', $campaign->status->value ?? 'open') === $value)>{{ __($label) }}</option>
                 @endforeach
