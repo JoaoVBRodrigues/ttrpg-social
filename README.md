@@ -178,6 +178,8 @@ Run a specific test file:
 docker compose exec app php artisan test --filter=CampaignNotificationTest
 ```
 
+The test suite is isolated to SQLite in memory, so running tests does not wipe the local MySQL QA data.
+
 ## Useful Laravel Commands Inside Docker
 
 ```bash
@@ -200,16 +202,45 @@ Supporting services:
 - Reverb websocket port: `localhost:8081`
 - Vite dev server: `localhost:5173`
 
+## Stable Manual QA Accounts
+
+After every `php artisan migrate:fresh --seed` or `php artisan migrate --seed`, the following deterministic users are recreated:
+
+- GM / Narrator
+  - Email: `gm.qa@example.com`
+  - Username: `maravale_gm`
+  - Password: `password`
+- Player
+  - Email: `player.qa@example.com`
+  - Username: `leo_player`
+  - Password: `password`
+
+Stable seeded campaign:
+
+- `Echoes Below Brightwater`
+- Public URL: `http://localhost:8080/campaigns/echoes-below-brightwater`
+
+Important seeded state:
+
+- The GM user already owns the seeded public campaign.
+- The player user does not initially belong to that campaign.
+- The player can browse the campaign and request to join it.
+
 ## Validating Main Modules
 
-Use the seeded app with locally created users to validate the main flows:
+Use the seeded app to validate the main flows:
 
-- register and verify login/logout flow
-- edit a user profile and preferences
-- create a campaign by logging in and opening `http://localhost:8080/campaigns/create`
-- invite or request campaign membership
+- log in as the GM and player accounts above
+- switch language between English and Portuguese in the header
+- switch between light and dark mode in the header
+- browse public campaigns at `http://localhost:8080/campaigns`
+- open the seeded campaign at `http://localhost:8080/campaigns/echoes-below-brightwater`
+- request to join the seeded campaign as `player.qa@example.com`
+- log in as `gm.qa@example.com` and approve or deny the pending join request
+- check “My Campaigns” at `http://localhost:8080/my-campaigns`
+- create another campaign at `http://localhost:8080/campaigns/create`
 - schedule a session and answer RSVP
-- send chat messages
+- send campaign chat messages without a full-page refresh
 - execute dice rolls
 - confirm notifications/jobs are being created
 - create and edit campaign compendium entries
@@ -224,14 +255,20 @@ docker compose exec app php artisan pail --timeout=0
 
 ## Manual QA Checklist
 
-- Authentication works: register, log in, log out, reset password flow loads.
-- Profile update works: change profile fields and notification preferences.
-- Campaign creation works: create a campaign and confirm owner membership is created.
+- Authentication works: log in with both seeded users and verify logout still works.
+- Profile update works: open `http://localhost:8080/profile` and update public profile and notification preferences.
+- Campaign creation works: create a campaign at `http://localhost:8080/campaigns/create` and confirm owner membership is created.
+- Public campaign browse works: open `http://localhost:8080/campaigns` and open the seeded campaign.
+- Join request flow works: log in as `player.qa@example.com`, request to join `Echoes Below Brightwater`, then log in as the GM and approve or deny it with an optional message.
+- My Campaigns works: open `http://localhost:8080/my-campaigns` and confirm owned/active campaigns appear while pending requests do not.
 - Session RSVP works: create a session as GM and respond as an active member.
-- Chat works: send a campaign message and see it persist.
+- Chat works: send a campaign message in the campaign chat and verify it appears without a full-page reload.
 - Dice roller works: submit a valid roll and confirm a dice message plus persisted roll history.
 - Notifications/jobs work: invite a member, schedule/update a session, mark a message as important, and watch the queue logs.
 - Compendium pages work: create, update, and delete campaign reference entries.
+- Landing page works: open `http://localhost:8080/` and verify the new TTRPG product homepage.
+- Language switcher works: switch EN/PT and verify major navigation and campaign texts update.
+- Theme switcher works: toggle light/dark mode and verify the preference persists on reload.
 
 ## Troubleshooting
 
@@ -280,6 +317,14 @@ The app container should resolve:
 - `CACHE_STORE=redis`
 - `BROADCAST_CONNECTION=reverb`
 
+### If you want to reset the whole QA environment
+
+```bash
+docker compose exec app php artisan migrate:fresh --seed
+```
+
+This rebuilds the schema and restores the two stable QA users plus the seeded public campaign.
+
 ## Exact Runbook
 
 Run these commands in order from the repository root:
@@ -287,7 +332,7 @@ Run these commands in order from the repository root:
 ```bash
 cp .env.example .env
 docker compose build
-docker compose up -d
+docker compose up -d --force-recreate
 docker compose exec app composer install
 docker compose exec frontend npm install
 docker compose exec app php artisan key:generate
@@ -299,4 +344,17 @@ Then open:
 
 ```text
 http://localhost:8080
+```
+
+Useful manual test URLs:
+
+```text
+Home: http://localhost:8080/
+Login: http://localhost:8080/login
+Public campaigns: http://localhost:8080/campaigns
+My Campaigns: http://localhost:8080/my-campaigns
+Create campaign: http://localhost:8080/campaigns/create
+Seeded campaign: http://localhost:8080/campaigns/echoes-below-brightwater
+Vite: http://localhost:5173
+Reverb: ws://localhost:8081
 ```
