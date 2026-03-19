@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use App\Enums\CampaignMemberRole;
 use App\Enums\CampaignMemberStatus;
 use App\Events\CampaignMessageCreated;
+use App\Livewire\Chat\CampaignChat;
 use App\Models\Campaign;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class CampaignChatTest extends TestCase
@@ -108,5 +110,48 @@ class CampaignChatTest extends TestCase
         ]);
 
         $response->assertForbidden();
+    }
+
+    public function test_livewire_chat_can_post_without_full_page_redirect_flow(): void
+    {
+        Event::fake([CampaignMessageCreated::class]);
+
+        $owner = User::factory()->create();
+        $player = User::factory()->create();
+        $campaign = Campaign::factory()->create(['owner_id' => $owner->id]);
+
+        $campaign->members()->createMany([
+            [
+                'user_id' => $owner->id,
+                'role' => CampaignMemberRole::GM,
+                'status' => CampaignMemberStatus::ACTIVE,
+                'joined_at' => now(),
+            ],
+            [
+                'user_id' => $player->id,
+                'role' => CampaignMemberRole::PLAYER,
+                'status' => CampaignMemberStatus::ACTIVE,
+                'joined_at' => now(),
+            ],
+        ]);
+
+        $this->actingAs($player);
+
+        Livewire::test(CampaignChat::class, ['campaign' => $campaign])
+            ->set('content', 'Livewire keeps this smooth.')
+            ->set('isImportant', true)
+            ->call('sendMessage')
+            ->assertSet('content', '')
+            ->assertSet('isImportant', false)
+            ->assertSee('Livewire keeps this smooth.');
+
+        $this->assertDatabaseHas('messages', [
+            'campaign_id' => $campaign->id,
+            'user_id' => $player->id,
+            'content' => 'Livewire keeps this smooth.',
+            'is_important' => 1,
+        ]);
+
+        Event::assertDispatched(CampaignMessageCreated::class);
     }
 }
