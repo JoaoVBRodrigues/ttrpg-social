@@ -33,9 +33,14 @@ new class extends Component
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('campaigns.index')" :active="request()->routeIs('campaigns.*')" wire:navigate>
+                    <x-nav-link :href="route('campaigns.index')" :active="request()->routeIs('campaigns.index') || request()->routeIs('campaigns.show')" wire:navigate>
                         {{ __('Campaigns') }}
                     </x-nav-link>
+                    @auth
+                        <x-nav-link :href="route('campaigns.mine')" :active="request()->routeIs('campaigns.mine')" wire:navigate>
+                            {{ __('My Campaigns') }}
+                        </x-nav-link>
+                    @endauth
                 </div>
             </div>
 
@@ -109,11 +114,15 @@ new class extends Component
             @endauth
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('campaigns.index')" :active="request()->routeIs('campaigns.*')" wire:navigate>
+                <x-responsive-nav-link :href="route('campaigns.index')" :active="request()->routeIs('campaigns.index') || request()->routeIs('campaigns.show')" wire:navigate>
                     {{ __('Campaigns') }}
                 </x-responsive-nav-link>
 
                 @auth
+                    <x-responsive-nav-link :href="route('campaigns.mine')" :active="request()->routeIs('campaigns.mine')" wire:navigate>
+                        {{ __('My Campaigns') }}
+                    </x-responsive-nav-link>
+
                     <x-responsive-nav-link :href="route('profile')" wire:navigate>
                         {{ __('Profile') }}
                     </x-responsive-nav-link>

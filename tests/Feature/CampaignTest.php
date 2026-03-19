@@ -306,4 +306,68 @@ class CampaignTest extends TestCase
 
         $response->assertForbidden();
     }
+
+    public function test_my_campaigns_page_shows_owned_and_active_member_campaigns_only(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $ownedCampaign = Campaign::factory()->create([
+            'owner_id' => $user->id,
+            'title' => 'Owned Table',
+        ]);
+
+        $ownedCampaign->members()->create([
+            'user_id' => $user->id,
+            'role' => CampaignMemberRole::GM,
+            'status' => CampaignMemberStatus::ACTIVE,
+            'joined_at' => now(),
+        ]);
+
+        $memberCampaign = Campaign::factory()->create([
+            'owner_id' => $otherUser->id,
+            'title' => 'Member Table',
+        ]);
+
+        $memberCampaign->members()->create([
+            'user_id' => $otherUser->id,
+            'role' => CampaignMemberRole::GM,
+            'status' => CampaignMemberStatus::ACTIVE,
+            'joined_at' => now(),
+        ]);
+
+        $memberCampaign->members()->create([
+            'user_id' => $user->id,
+            'role' => CampaignMemberRole::PLAYER,
+            'status' => CampaignMemberStatus::ACTIVE,
+            'joined_at' => now(),
+        ]);
+
+        $pendingCampaign = Campaign::factory()->create([
+            'owner_id' => $otherUser->id,
+            'title' => 'Pending Table',
+        ]);
+
+        $pendingCampaign->members()->create([
+            'user_id' => $otherUser->id,
+            'role' => CampaignMemberRole::GM,
+            'status' => CampaignMemberStatus::ACTIVE,
+            'joined_at' => now(),
+        ]);
+
+        $pendingCampaign->members()->create([
+            'user_id' => $user->id,
+            'role' => CampaignMemberRole::PLAYER,
+            'status' => CampaignMemberStatus::PENDING,
+        ]);
+
+        $response = $this->actingAs($user)->get(route('campaigns.mine'));
+
+        $response
+            ->assertOk()
+            ->assertSee('My Campaigns')
+            ->assertSee('Owned Table')
+            ->assertSee('Member Table')
+            ->assertDontSee('Pending Table');
+    }
 }

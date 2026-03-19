@@ -39,6 +39,36 @@ class CampaignService
         return $this->queryPublicCampaigns($filters)->paginate($perPage)->withQueryString();
     }
 
+    public function queryUserCampaigns(User $user, array $filters = []): Builder
+    {
+        return Campaign::query()
+            ->with(['owner', 'gameSystem'])
+            ->withCount([
+                'members as active_members_count' => fn (Builder $query) => $query->where('status', CampaignMemberStatus::ACTIVE->value),
+            ])
+            ->where(function (Builder $query) use ($user): void {
+                $query->where('owner_id', $user->getKey())
+                    ->orWhereHas('members', function (Builder $membershipQuery) use ($user): void {
+                        $membershipQuery
+                            ->where('user_id', $user->getKey())
+                            ->where('status', CampaignMemberStatus::ACTIVE->value);
+                    });
+            })
+            ->when($filters['search'] ?? null, function (Builder $query, string $search): void {
+                $query->where(function (Builder $inner) use ($search): void {
+                    $inner->where('title', 'like', '%'.$search.'%')
+                        ->orWhere('synopsis', 'like', '%'.$search.'%');
+                });
+            })
+            ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status))
+            ->latest();
+    }
+
+    public function paginateUserCampaigns(User $user, array $filters = [], int $perPage = 12): LengthAwarePaginator
+    {
+        return $this->queryUserCampaigns($user, $filters)->paginate($perPage)->withQueryString();
+    }
+
     public function createCampaign(User $owner, array $data): Campaign
     {
         return DB::transaction(function () use ($owner, $data): Campaign {

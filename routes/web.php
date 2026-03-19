@@ -32,6 +32,9 @@ Route::put('profile/preferences', [ProfileController::class, 'updatePreferences'
     ->name('profile.preferences.update');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
+    Route::get('my-campaigns', [CampaignController::class, 'mine'])
+        ->name('campaigns.mine');
+
     Route::resource('campaigns', CampaignController::class)
         ->only(['create', 'store', 'edit', 'update'])
         ->scoped(['campaign' => 'slug']);

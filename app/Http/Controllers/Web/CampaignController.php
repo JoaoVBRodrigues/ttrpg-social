@@ -48,6 +48,20 @@ class CampaignController extends Controller
         ]);
     }
 
+    public function mine(Request $request, CampaignService $service): View
+    {
+        return view('campaigns.mine', [
+            'campaigns' => $service->paginateUserCampaigns($request->user(), $request->only([
+                'search',
+                'status',
+            ]), 9),
+            'filters' => [
+                'search' => (string) $request->string('search'),
+                'status' => (string) $request->string('status'),
+            ],
+        ]);
+    }
+
     public function store(StoreCampaignRequest $request, CampaignService $service)
     {
         return $this->handleAction($request, function () use ($request, $service) {
