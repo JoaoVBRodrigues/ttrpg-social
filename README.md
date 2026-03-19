@@ -2,46 +2,51 @@
 
 Laravel 12 + Livewire application for organizing TTRPG campaigns, sessions, RSVP, realtime chat, dice rolls, notifications, and campaign compendium content.
 
-## Prerequisites
+## English
+
+### Overview
+
+Local development is designed around Docker. The stack includes:
+
+- `app`: PHP 8.2 FPM running Laravel
+- `nginx`: web server on `http://localhost:8080`
+- `mysql`: MySQL 8.4 with persistent data volume
+- `redis`: cache, queue, and broadcast support
+- `queue`: Laravel queue worker
+- `reverb`: Laravel Reverb websocket server
+- `frontend`: Vite dev server
+
+### Prerequisites
 
 - Docker Desktop with Docker Compose
 - Git
 
-Optional but useful:
+Optional:
 
 - A terminal with `docker compose`
-- A database client if you want to inspect MySQL manually
+- A database client for MySQL inspection
 
-## Local Architecture
-
-The local Docker stack includes:
-
-- `app`: PHP 8.2 FPM container running Laravel
-- `nginx`: web server serving the app on `http://localhost:8080`
-- `mysql`: MySQL 8.4 with persistent data volume
-- `redis`: Redis for cache, queue, and broadcast support
-- `queue`: Laravel queue worker
-- `reverb`: Laravel Reverb websocket server
-- `frontend`: Vite dev server for Livewire/Blade frontend assets
-
-## First-Time Setup
+### First-time setup
 
 1. Clone the repository.
-2. Copy the environment file.
-3. Review the Docker-oriented defaults in `.env`.
-4. Build the containers.
-5. Start the stack.
-6. Install PHP and Node dependencies inside Docker.
-7. Generate the Laravel app key.
-8. Run migrations and seeders.
-
-### Copy `.env.example` to `.env`
+2. Copy `.env.example` to `.env`.
+3. Build the Docker images.
+4. Start the stack.
+5. Install Composer and NPM dependencies inside Docker.
+6. Generate the Laravel app key.
+7. Run migrations and seeders.
 
 ```bash
 cp .env.example .env
+docker compose build
+docker compose up -d --force-recreate
+docker compose exec app composer install
+docker compose exec frontend npm install
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate --seed
 ```
 
-Important defaults for Docker in `.env`:
+Important Docker defaults in `.env`:
 
 - `APP_URL=http://localhost:8080`
 - `DB_HOST=mysql`
@@ -58,153 +63,58 @@ Important defaults for Docker in `.env`:
 - `VITE_REVERB_HOST=localhost`
 - `VITE_REVERB_PORT=8081`
 
-## Build and Start
+### Main commands
 
-### Build images
-
-```bash
-docker compose build
-```
-
-### Start the full stack
-
-```bash
-docker compose up -d
-```
-
-The app container and frontend container will auto-install dependencies on first boot if needed, but the explicit install commands below are still the recommended setup flow.
-
-Docker containers inject Docker-safe database, Redis, queue, cache, and Reverb hosts automatically. That means your normal local `.env` can stay local-development oriented if you want, while Docker still talks to `mysql`, `redis`, and `reverb` correctly.
-
-## Dependency Installation
-
-### Composer install
-
-```bash
-docker compose exec app composer install
-```
-
-### NPM install
-
-```bash
-docker compose exec frontend npm install
-```
-
-## Laravel App Initialization
-
-### Generate the application key
-
-```bash
-docker compose exec app php artisan key:generate
-```
-
-### Run migrations and seeders
-
-```bash
-docker compose exec app php artisan migrate --seed
-```
-
-If you want a clean reset:
-
-```bash
-docker compose exec app php artisan migrate:fresh --seed
-```
-
-## Running the Main Services
-
-### Application
-
-The Laravel app is served through nginx at:
-
-- `http://localhost:8080`
-
-### Queue worker
-
-The queue worker runs in the `queue` service automatically when the stack is up.
-
-Useful commands:
-
-```bash
-docker compose logs -f queue
-docker compose restart queue
-docker compose exec app php artisan queue:work --verbose --tries=1 --timeout=90
-```
-
-### Websocket / Reverb
-
-The Reverb websocket server runs in the `reverb` service automatically when the stack is up.
-
-Endpoints:
-
-- App HTTP: `http://localhost:8080`
-- Reverb websocket port: `ws://localhost:8081`
-
-Useful commands:
-
-```bash
-docker compose logs -f reverb
-docker compose restart reverb
-docker compose exec app php artisan reverb:start --host=0.0.0.0 --port=8080
-```
-
-### Vite / frontend watch
-
-The `frontend` service runs the Vite dev server automatically.
-
-Useful commands:
-
-```bash
-docker compose logs -f frontend
-docker compose restart frontend
-docker compose exec frontend npm run dev -- --host=0.0.0.0 --port=5173
-docker compose exec frontend npm run build
-```
-
-Frontend dev server:
-
-- `http://localhost:5173`
-
-## Running Tests
-
-Run the full Laravel test suite inside Docker:
+Run tests:
 
 ```bash
 docker compose exec app php artisan test
 ```
 
-Run a specific test file:
+Reset the local QA database:
 
 ```bash
-docker compose exec app php artisan test --filter=CampaignNotificationTest
+docker compose exec app php artisan migrate:fresh --seed
 ```
 
-The test suite is isolated to SQLite in memory, so running tests does not wipe the local MySQL QA data.
-
-## Useful Laravel Commands Inside Docker
+Clear Laravel caches:
 
 ```bash
-docker compose exec app php artisan config:clear
-docker compose exec app php artisan route:list
-docker compose exec app php artisan db:seed
-docker compose exec app php artisan tinker
+docker compose exec app php artisan optimize:clear
 ```
 
-## Accessing the Application
+Watch Vite logs:
 
-After setup, open:
+```bash
+docker compose logs -f frontend
+```
 
-- `http://localhost:8080`
+Watch queue logs:
 
-Supporting services:
+```bash
+docker compose logs -f queue
+```
 
-- MySQL host port: `localhost:33060`
-- Redis host port: `localhost:63790`
-- Reverb websocket port: `localhost:8081`
-- Vite dev server: `localhost:5173`
+Watch Reverb logs:
 
-## Stable Manual QA Accounts
+```bash
+docker compose logs -f reverb
+```
 
-After every `php artisan migrate:fresh --seed` or `php artisan migrate --seed`, the following deterministic users are recreated:
+### URLs
+
+- App: `http://localhost:8080`
+- Login: `http://localhost:8080/login`
+- Public campaigns: `http://localhost:8080/campaigns`
+- My Campaigns: `http://localhost:8080/my-campaigns`
+- Create campaign: `http://localhost:8080/campaigns/create`
+- Seeded campaign: `http://localhost:8080/campaigns/echoes-below-brightwater`
+- Vite dev server: `http://localhost:5173`
+- Reverb websocket: `ws://localhost:8081`
+
+### Stable QA users
+
+After `php artisan migrate --seed` or `php artisan migrate:fresh --seed`, these deterministic accounts are recreated:
 
 - GM / Narrator
   - Email: `gm.qa@example.com`
@@ -218,116 +128,109 @@ After every `php artisan migrate:fresh --seed` or `php artisan migrate --seed`, 
 Stable seeded campaign:
 
 - `Echoes Below Brightwater`
-- Public URL: `http://localhost:8080/campaigns/echoes-below-brightwater`
+- URL: `http://localhost:8080/campaigns/echoes-below-brightwater`
 
-Important seeded state:
+Seeded state:
 
-- The GM user already owns the seeded public campaign.
+- The GM user owns the public seeded campaign.
 - The player user does not initially belong to that campaign.
-- The player can browse the campaign and request to join it.
+- The player user can browse the campaign and request to join it.
 
-## Validating Main Modules
+### Manual QA checklist
 
-Use the seeded app to validate the main flows:
+- Log in as the GM and as the player.
+- Switch language between English and Portuguese in the header.
+- Switch between light and dark mode in the header.
+- Open the homepage and confirm the TTRPG landing page is displayed.
+- Browse public campaigns and open the seeded campaign.
+- Request to join the seeded campaign as `player.qa@example.com`.
+- Log in as `gm.qa@example.com` and approve or deny the pending join request.
+- Confirm `My Campaigns` shows owned and active-member campaigns correctly.
+- Update the profile page and notification preferences.
+- Create another campaign.
+- Schedule a session and answer RSVP.
+- Send chat messages and confirm they appear without a full-page reload.
+- Execute a dice roll.
+- Create, update, and delete compendium entries.
 
-- log in as the GM and player accounts above
-- switch language between English and Portuguese in the header
-- switch between light and dark mode in the header
-- browse public campaigns at `http://localhost:8080/campaigns`
-- open the seeded campaign at `http://localhost:8080/campaigns/echoes-below-brightwater`
-- request to join the seeded campaign as `player.qa@example.com`
-- log in as `gm.qa@example.com` and approve or deny the pending join request
-- check “My Campaigns” at `http://localhost:8080/my-campaigns`
-- create another campaign at `http://localhost:8080/campaigns/create`
-- schedule a session and answer RSVP
-- send campaign chat messages without a full-page refresh
-- execute dice rolls
-- confirm notifications/jobs are being created
-- create and edit campaign compendium entries
+### Troubleshooting
 
-You can inspect running notifications and jobs with:
+Recreate the stack:
 
 ```bash
-docker compose logs -f queue
-docker compose logs -f reverb
-docker compose exec app php artisan pail --timeout=0
+docker compose up -d --force-recreate
 ```
 
-## Manual QA Checklist
-
-- Authentication works: log in with both seeded users and verify logout still works.
-- Profile update works: open `http://localhost:8080/profile` and update public profile and notification preferences.
-- Campaign creation works: create a campaign at `http://localhost:8080/campaigns/create` and confirm owner membership is created.
-- Public campaign browse works: open `http://localhost:8080/campaigns` and open the seeded campaign.
-- Join request flow works: log in as `player.qa@example.com`, request to join `Echoes Below Brightwater`, then log in as the GM and approve or deny it with an optional message.
-- My Campaigns works: open `http://localhost:8080/my-campaigns` and confirm owned/active campaigns appear while pending requests do not.
-- Session RSVP works: create a session as GM and respond as an active member.
-- Chat works: send a campaign message in the campaign chat and verify it appears without a full-page reload.
-- Dice roller works: submit a valid roll and confirm a dice message plus persisted roll history.
-- Notifications/jobs work: invite a member, schedule/update a session, mark a message as important, and watch the queue logs.
-- Compendium pages work: create, update, and delete campaign reference entries.
-- Landing page works: open `http://localhost:8080/` and verify the new TTRPG product homepage.
-- Language switcher works: switch EN/PT and verify major navigation and campaign texts update.
-- Theme switcher works: toggle light/dark mode and verify the preference persists on reload.
-
-## Troubleshooting
-
-### Rebuild everything
+Full rebuild:
 
 ```bash
 docker compose down
 docker compose build --no-cache
-docker compose up -d
+docker compose up -d --force-recreate
 ```
 
-### Remove containers and volumes
+Recreate everything including volumes:
 
 ```bash
 docker compose down -v
+docker compose build
+docker compose up -d --force-recreate
 ```
 
-### If environment values change
+If you changed `.env` values:
 
 ```bash
 docker compose exec app php artisan config:clear
 docker compose up -d --force-recreate app queue reverb nginx frontend
 ```
 
-### If you generated a new `APP_KEY`
-
-Because Docker injects env vars when containers are created, changing `APP_KEY` in `.env` requires container recreation:
+If Laravel views or cached config look stale:
 
 ```bash
-docker compose up -d --force-recreate app queue reverb nginx
+docker compose exec app php artisan optimize:clear
 ```
 
-### If Docker is still using localhost-style database or Redis hosts
-
-Check the live container env:
+If the app stops responding through nginx:
 
 ```bash
-docker compose exec app env
+docker compose ps
+docker compose logs --tail=100 app
+docker compose logs --tail=100 nginx
 ```
 
-The app container should resolve:
+## Português
 
-- `DB_HOST=mysql`
-- `REDIS_HOST=redis`
-- `QUEUE_CONNECTION=redis`
-- `CACHE_STORE=redis`
-- `BROADCAST_CONNECTION=reverb`
+### Visão geral
 
-### If you want to reset the whole QA environment
+O desenvolvimento local foi preparado para Docker. A stack inclui:
 
-```bash
-docker compose exec app php artisan migrate:fresh --seed
-```
+- `app`: PHP 8.2 FPM executando o Laravel
+- `nginx`: servidor web em `http://localhost:8080`
+- `mysql`: MySQL 8.4 com volume persistente
+- `redis`: suporte a cache, filas e broadcast
+- `queue`: worker de filas do Laravel
+- `reverb`: servidor websocket Laravel Reverb
+- `frontend`: servidor do Vite
 
-This rebuilds the schema and restores the two stable QA users plus the seeded public campaign.
+### Pré-requisitos
 
-## Exact Runbook
+- Docker Desktop com Docker Compose
+- Git
 
-Run these commands in order from the repository root:
+Opcional:
+
+- Um terminal com `docker compose`
+- Um cliente de banco para inspecionar o MySQL
+
+### Primeira configuração
+
+1. Clone o repositório.
+2. Copie `.env.example` para `.env`.
+3. Faça o build das imagens Docker.
+4. Suba a stack.
+5. Instale as dependências do Composer e do NPM dentro do Docker.
+6. Gere a chave da aplicação Laravel.
+7. Execute migrations e seeders.
 
 ```bash
 cp .env.example .env
@@ -337,24 +240,156 @@ docker compose exec app composer install
 docker compose exec frontend npm install
 docker compose exec app php artisan key:generate
 docker compose exec app php artisan migrate --seed
+```
+
+Principais valores Docker no `.env`:
+
+- `APP_URL=http://localhost:8080`
+- `DB_HOST=mysql`
+- `DB_PORT=3306`
+- `DB_DATABASE=ttrpg_social`
+- `DB_USERNAME=ttrpg`
+- `DB_PASSWORD=ttrpg`
+- `REDIS_HOST=redis`
+- `QUEUE_CONNECTION=redis`
+- `CACHE_STORE=redis`
+- `BROADCAST_CONNECTION=reverb`
+- `REVERB_HOST=reverb`
+- `REVERB_PORT=8080`
+- `VITE_REVERB_HOST=localhost`
+- `VITE_REVERB_PORT=8081`
+
+### Comandos principais
+
+Rodar os testes:
+
+```bash
 docker compose exec app php artisan test
 ```
 
-Then open:
+Resetar o banco local de QA:
 
-```text
-http://localhost:8080
+```bash
+docker compose exec app php artisan migrate:fresh --seed
 ```
 
-Useful manual test URLs:
+Limpar caches do Laravel:
 
-```text
-Home: http://localhost:8080/
-Login: http://localhost:8080/login
-Public campaigns: http://localhost:8080/campaigns
-My Campaigns: http://localhost:8080/my-campaigns
-Create campaign: http://localhost:8080/campaigns/create
-Seeded campaign: http://localhost:8080/campaigns/echoes-below-brightwater
-Vite: http://localhost:5173
-Reverb: ws://localhost:8081
+```bash
+docker compose exec app php artisan optimize:clear
+```
+
+Ver logs do Vite:
+
+```bash
+docker compose logs -f frontend
+```
+
+Ver logs da fila:
+
+```bash
+docker compose logs -f queue
+```
+
+Ver logs do Reverb:
+
+```bash
+docker compose logs -f reverb
+```
+
+### URLs
+
+- App: `http://localhost:8080`
+- Login: `http://localhost:8080/login`
+- Campanhas públicas: `http://localhost:8080/campaigns`
+- Minhas Campanhas: `http://localhost:8080/my-campaigns`
+- Criar campanha: `http://localhost:8080/campaigns/create`
+- Campanha semeada: `http://localhost:8080/campaigns/echoes-below-brightwater`
+- Vite: `http://localhost:5173`
+- Reverb websocket: `ws://localhost:8081`
+
+### Usuários estáveis para QA
+
+Depois de `php artisan migrate --seed` ou `php artisan migrate:fresh --seed`, estas contas determinísticas são recriadas:
+
+- GM / Narrador
+  - E-mail: `gm.qa@example.com`
+  - Username: `maravale_gm`
+  - Senha: `password`
+- Jogador
+  - E-mail: `player.qa@example.com`
+  - Username: `leo_player`
+  - Senha: `password`
+
+Campanha semeada:
+
+- `Echoes Below Brightwater`
+- URL: `http://localhost:8080/campaigns/echoes-below-brightwater`
+
+Estado inicial semeado:
+
+- O usuário GM já é dono da campanha pública semeada.
+- O usuário jogador não pertence inicialmente a essa campanha.
+- O jogador pode navegar até a campanha e solicitar entrada.
+
+### Checklist manual de QA
+
+- Fazer login com o GM e com o jogador.
+- Alternar o idioma entre inglês e português no cabeçalho.
+- Alternar entre modo claro e escuro no cabeçalho.
+- Abrir a homepage e confirmar a landing page temática de TTRPG.
+- Navegar pelas campanhas públicas e abrir a campanha semeada.
+- Solicitar entrada na campanha com `player.qa@example.com`.
+- Entrar com `gm.qa@example.com` e aprovar ou negar a solicitação pendente.
+- Confirmar que `My Campaigns` mostra corretamente campanhas próprias e campanhas nas quais o usuário é membro ativo.
+- Atualizar perfil e preferências de notificação.
+- Criar outra campanha.
+- Agendar uma sessão e responder o RSVP.
+- Enviar mensagens no chat e confirmar que aparecem sem recarregar a página inteira.
+- Fazer uma rolagem de dados.
+- Criar, editar e excluir entradas do compêndio.
+
+### Solução de problemas
+
+Recriar a stack:
+
+```bash
+docker compose up -d --force-recreate
+```
+
+Rebuild completo:
+
+```bash
+docker compose down
+docker compose build --no-cache
+docker compose up -d --force-recreate
+```
+
+Recriar tudo, incluindo volumes:
+
+```bash
+docker compose down -v
+docker compose build
+docker compose up -d --force-recreate
+```
+
+Se você alterou valores no `.env`:
+
+```bash
+docker compose exec app php artisan config:clear
+docker compose up -d --force-recreate app queue reverb nginx frontend
+```
+
+Se o cache do Laravel ou as views parecerem desatualizados:
+
+```bash
+docker compose exec app php artisan optimize:clear
+```
+
+Se a aplicação parar de responder pelo nginx:
+
+```bash
+docker compose ps
+docker compose logs --tail=100 app
+docker compose logs --tail=100 nginx
 ```
