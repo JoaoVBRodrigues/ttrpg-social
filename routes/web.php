@@ -6,11 +6,17 @@ use App\Http\Controllers\Web\CampaignMembershipController;
 use App\Http\Controllers\Web\CampaignMessageController;
 use App\Http\Controllers\Web\CampaignReferenceController;
 use App\Http\Controllers\Web\CampaignSessionController;
+use App\Http\Controllers\Web\LandingPageController;
+use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\SessionAttendanceController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome');
+Route::get('/', LandingPageController::class)
+    ->name('home');
+
+Route::get('locale/{locale}', LocaleController::class)
+    ->name('locale.update');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
