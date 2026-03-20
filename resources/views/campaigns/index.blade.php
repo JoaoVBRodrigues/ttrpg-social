@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between gap-4">
             <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('Discover campaigns') }}</p>
+                <p class="eyebrow">{{ __('Discover campaigns') }}</p>
                 <h2 class="mt-3 font-display text-3xl leading-tight">{{ __('Campaigns') }}</h2>
                 <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('Discover public tables, filter by system, and find your next session.') }}</p>
             </div>

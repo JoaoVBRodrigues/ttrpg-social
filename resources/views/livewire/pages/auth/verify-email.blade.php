@@ -37,7 +37,7 @@ new #[Layout('layouts.guest')] class extends Component
 
 <div>
     <div class="mb-6">
-        <p class="text-sm font-semibold uppercase tracking-[0.28em] text-amber-500">{{ __('Check your inbox') }}</p>
+        <p class="eyebrow">{{ __('Check your inbox') }}</p>
         <h1 class="mt-3 font-display text-3xl">{{ __('Verify your email') }}</h1>
     </div>
 
@@ -46,7 +46,7 @@ new #[Layout('layouts.guest')] class extends Component
     </div>
 
     @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-600 dark:text-emerald-300">
+        <div class="callout callout-success mb-4 font-medium">
             {{ __('A new verification link has been sent to the email address you provided during registration.') }}
         </div>
     @endif
@@ -56,7 +56,7 @@ new #[Layout('layouts.guest')] class extends Component
             {{ __('Resend Verification Email') }}
         </x-primary-button>
 
-        <button wire:click="logout" type="submit" class="page-link rounded-md text-sm underline focus:outline-none focus:ring-2 focus:ring-amber-400/30 focus:ring-offset-2">
+        <button wire:click="logout" type="submit" class="page-link rounded-md text-sm underline">
             {{ __('Log Out') }}
         </button>
     </div>

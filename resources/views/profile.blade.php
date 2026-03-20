@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between gap-4">
             <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('Account and identity') }}</p>
+                <p class="eyebrow">{{ __('Account and identity') }}</p>
                 <h2 class="mt-3 font-display text-3xl leading-tight">
                     {{ __('Profile') }}
                 </h2>
@@ -28,13 +28,13 @@
     <div class="page-shell">
         <div class="page-stack mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             @if (session('status') === 'profile-updated')
-                <div class="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300">
+                <div class="callout callout-success">
                     {{ __('Profile updated successfully.') }}
                 </div>
             @endif
 
             @if (session('status') === 'notification-preferences-updated')
-                <div class="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300">
+                <div class="callout callout-success">
                     {{ __('Notification preferences updated successfully.') }}
                 </div>
             @endif
@@ -77,7 +77,7 @@
 
                     <div>
                         <x-input-label for="preferred_role" :value="__('Preferred role')" />
-                        <select id="preferred_role" name="preferred_role" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">
+                        <select id="preferred_role" name="preferred_role" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm">
                             @foreach (['player' => 'Player', 'gm' => 'Game Master', 'both' => 'Both'] as $value => $label)
                                 <option value="{{ $value }}" @selected(old('preferred_role', $user->preferred_role) === $value)>{{ __($label) }}</option>
                             @endforeach
@@ -99,13 +99,13 @@
 
                     <div class="lg:col-span-2">
                         <x-input-label for="bio" :value="__('Bio')" />
-                        <textarea id="bio" name="bio" rows="4" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">{{ old('bio', $user->bio) }}</textarea>
+                        <textarea id="bio" name="bio" rows="4" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm">{{ old('bio', $user->bio) }}</textarea>
                         <x-input-error class="mt-2" :messages="$errors->get('bio')" />
                     </div>
 
                     <div class="lg:col-span-2">
                         <x-input-label for="availability_text" :value="__('Availability')" />
-                        <textarea id="availability_text" name="availability_text" rows="4" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">{{ old('availability_text', collect($user->availability ?? [])->map(fn ($entry) => ($entry['day'] ?? '').': '.($entry['window'] ?? ''))->implode(PHP_EOL)) }}</textarea>
+                        <textarea id="availability_text" name="availability_text" rows="4" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm">{{ old('availability_text', collect($user->availability ?? [])->map(fn ($entry) => ($entry['day'] ?? '').': '.($entry['window'] ?? ''))->implode(PHP_EOL)) }}</textarea>
                         <p class="mt-2 text-xs leading-6" style="color: var(--app-text-muted);">{{ __('One line per slot using the format Day: time window.') }}</p>
                         <x-input-error class="mt-2" :messages="$errors->get('availability')" />
                     </div>
@@ -131,7 +131,7 @@
                     </div>
 
                     @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
-                        <div class="lg:col-span-2 rounded-2xl border border-amber-300/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-300">
+                        <div class="callout callout-warning lg:col-span-2">
                             {{ __('Your email address is still unverified.') }}
                         </div>
                     @endif

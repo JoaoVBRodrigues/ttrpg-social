@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between gap-4">
             <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('Tabletop control center') }}</p>
+                <p class="eyebrow">{{ __('Tabletop control center') }}</p>
                 <h2 class="mt-3 font-display text-3xl leading-tight">
                     {{ __('Dashboard') }}
                 </h2>
@@ -35,7 +35,7 @@
                 </div>
 
                 <div class="page-card-soft">
-                    <p class="text-sm font-semibold uppercase tracking-[0.28em] text-amber-500">{{ __('Quick route') }}</p>
+                    <p class="eyebrow">{{ __('Quick route') }}</p>
                     <div class="mt-5 space-y-4 text-sm leading-7" style="color: var(--app-text-muted);">
                         <p>{{ __('Browse public tables to discover new groups, or head to My Campaigns to manage the tables you already run.') }}</p>
                         <p>{{ __('From any campaign room you can review join requests, schedule sessions, update the compendium, chat in realtime, and roll dice.') }}</p>

@@ -43,7 +43,7 @@
 
                 <main class="mt-8 flex-1 space-y-6">
                     <section class="page-card">
-                        <p class="text-sm font-medium uppercase tracking-[0.3em] text-amber-500">{{ __('TTRPG profile') }}</p>
+                        <p class="eyebrow">{{ __('TTRPG profile') }}</p>
                         <div class="mt-4 grid gap-8 md:grid-cols-[1.5fr,1fr]">
                             <div>
                                 <h1 class="font-display text-4xl">{{ $profile['name'] }}</h1>

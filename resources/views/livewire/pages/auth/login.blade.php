@@ -26,7 +26,7 @@ new #[Layout('layouts.guest')] class extends Component
 
 <div>
     <div class="mb-6">
-        <p class="text-sm font-semibold uppercase tracking-[0.28em] text-amber-500">{{ __('Welcome back') }}</p>
+        <p class="eyebrow">{{ __('Welcome back') }}</p>
         <h1 class="mt-3 font-display text-3xl">{{ __('Log in') }}</h1>
         <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('Return to your campaigns, pending requests, and the next session on your table calendar.') }}</p>
     </div>
@@ -60,7 +60,7 @@ new #[Layout('layouts.guest')] class extends Component
 
         <div class="mt-4 flex items-center justify-end">
             @if (Route::has('password.request'))
-                <a class="page-link rounded-md text-sm underline focus:outline-none focus:ring-2 focus:ring-amber-400/30 focus:ring-offset-2" href="{{ route('password.request') }}" wire:navigate>
+                <a class="page-link rounded-md text-sm underline" href="{{ route('password.request') }}" wire:navigate>
                     {{ __('Forgot your password?') }}
                 </a>
             @endif

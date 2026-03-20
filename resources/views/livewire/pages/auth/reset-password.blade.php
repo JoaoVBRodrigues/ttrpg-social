@@ -65,7 +65,7 @@ new #[Layout('layouts.guest')] class extends Component
 
 <div>
     <div class="mb-6">
-        <p class="text-sm font-semibold uppercase tracking-[0.28em] text-amber-500">{{ __('Choose a new password') }}</p>
+        <p class="eyebrow">{{ __('Choose a new password') }}</p>
         <h1 class="mt-3 font-display text-3xl">{{ __('Reset Password') }}</h1>
         <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('Set a new password so you can return to your tables and session planning.') }}</p>
     </div>

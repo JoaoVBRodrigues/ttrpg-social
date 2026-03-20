@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('Refine your pitch') }}</p>
+            <p class="eyebrow">{{ __('Refine your pitch') }}</p>
             <h2 class="mt-3 font-display text-3xl leading-tight">{{ __('Edit campaign') }}</h2>
             <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('Keep the table details, recruiting message, and play expectations aligned for prospective players.') }}</p>
         </div>

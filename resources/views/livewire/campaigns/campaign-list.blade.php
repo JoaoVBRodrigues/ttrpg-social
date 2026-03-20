@@ -8,7 +8,7 @@
 
             <div>
                 <x-input-label for="status" :value="__('Status')" />
-                <select id="status" wire:model.live="status" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">
+                <select id="status" wire:model.live="status" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm">
                     <option value="">{{ __('Any') }}</option>
                     @foreach(['open', 'full', 'ongoing', 'paused', 'finished'] as $value)
                         <option value="{{ $value }}">{{ ucfirst($value) }}</option>
@@ -18,7 +18,7 @@
 
             <div>
                 <x-input-label for="system" :value="__('System')" />
-                <select id="system" wire:model.live="system" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">
+                <select id="system" wire:model.live="system" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm">
                     <option value="">{{ __('Any') }}</option>
                     @foreach($gameSystems as $systemOption)
                         <option value="{{ $systemOption->slug }}">{{ $systemOption->name }}</option>

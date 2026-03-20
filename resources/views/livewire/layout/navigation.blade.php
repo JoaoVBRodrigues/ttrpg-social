@@ -16,7 +16,7 @@ new class extends Component
     }
 }; ?>
 
-<nav x-data="{ open: false }" class="relative z-[80] overflow-visible border-b border-white/10 bg-white/50 backdrop-blur dark:border-white/5 dark:bg-slate-950/50">
+<nav x-data="{ open: false }" class="nav-shell relative z-[80] overflow-visible border-b backdrop-blur">
     <!-- Primary Navigation Menu -->
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-20 justify-between">
@@ -56,7 +56,7 @@ new class extends Component
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            <button class="inline-flex items-center rounded-full border border-white/10 bg-white/50 px-4 py-2 text-sm font-medium shadow-sm transition hover:border-amber-300/40 dark:bg-slate-900/60">
+                            <button class="outline-button inline-flex items-center px-4 py-2 shadow-sm">
                                 <div x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
 
                                 <div class="ms-1">
@@ -93,7 +93,7 @@ new class extends Component
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center rounded-md p-2 transition duration-150 ease-in-out hover:bg-white/10 focus:outline-none">
+                <button @click="open = ! open" class="outline-button !rounded-2xl !px-3 !py-2 focus:outline-none">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -106,7 +106,7 @@ new class extends Component
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="relative z-[70] hidden sm:hidden">
         <div class="space-y-1 px-4 pb-3 pt-2">
-            <div class="flex items-center justify-between rounded-2xl border border-white/10 bg-white/40 px-4 py-3 dark:bg-slate-900/60">
+            <div class="page-card-soft !p-4 flex items-center justify-between">
                 <x-locale-switcher />
                 <x-theme-toggle />
             </div>
@@ -117,7 +117,7 @@ new class extends Component
         </div>
 
         <!-- Responsive Settings Options -->
-        <div class="border-t border-white/10 pb-1 pt-4 dark:border-white/5">
+        <div class="border-t pb-1 pt-4" style="border-color: var(--color-border);">
             @auth
                 <div class="px-4">
                     <div class="text-base font-medium" x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>

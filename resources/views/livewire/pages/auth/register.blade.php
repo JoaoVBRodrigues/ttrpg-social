@@ -73,7 +73,7 @@ new #[Layout('layouts.guest')] class extends Component
 
 <div>
     <div class="mb-6">
-        <p class="text-sm font-semibold uppercase tracking-[0.28em] text-amber-500">{{ __('Create your player identity') }}</p>
+        <p class="eyebrow">{{ __('Create your player identity') }}</p>
         <h1 class="mt-3 font-display text-3xl">{{ __('Register') }}</h1>
         <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('Join the platform, set up your account, and start browsing tables or building a campaign hub of your own.') }}</p>
     </div>
@@ -113,7 +113,7 @@ new #[Layout('layouts.guest')] class extends Component
         </div>
 
         <div class="mt-4 flex items-center justify-end">
-            <a class="page-link rounded-md text-sm underline focus:outline-none focus:ring-2 focus:ring-amber-400/30 focus:ring-offset-2" href="{{ route('login') }}" wire:navigate>
+            <a class="page-link rounded-md text-sm underline" href="{{ route('login') }}" wire:navigate>
                 {{ __('Already registered?') }}
             </a>
 

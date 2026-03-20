@@ -43,22 +43,22 @@
 
             <div class="mx-auto flex w-full max-w-6xl flex-1 items-center justify-center py-10">
                 <div class="grid w-full items-center gap-8 lg:grid-cols-[1.1fr,0.9fr]">
-                    <div class="hidden rounded-[2rem] border border-white/10 bg-slate-950/70 p-10 text-white shadow-2xl lg:block">
-                        <p class="text-sm font-semibold uppercase tracking-[0.35em] text-amber-300">{{ __('Tabletop community') }}</p>
+                    <div class="hero-card hidden lg:block">
+                        <p class="eyebrow-inverse">{{ __('Tabletop community') }}</p>
                         <h1 class="mt-5 font-display text-4xl font-semibold leading-tight">{{ __('Gather your party, manage your campaign, and keep every session moving.') }}</h1>
-                        <p class="mt-6 max-w-xl text-base leading-7 text-slate-300">{{ __('Coordinate your table with public campaign discovery, RSVP tracking, realtime chat, and dice rolls built for long-running TTRPG groups.') }}</p>
+                        <p class="text-inverse mt-6 max-w-xl text-base leading-7">{{ __('Coordinate your table with public campaign discovery, RSVP tracking, realtime chat, and dice rolls built for long-running TTRPG groups.') }}</p>
                         <div class="mt-8 grid gap-4 sm:grid-cols-3">
-                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                                <p class="text-xs uppercase tracking-[0.2em] text-amber-300">{{ __('Realtime') }}</p>
-                                <p class="mt-2 text-sm text-slate-200">{{ __('Live campaign chat and fast table updates.') }}</p>
+                            <div class="hero-subcard">
+                                <p class="eyebrow-inverse text-xs">{{ __('Realtime') }}</p>
+                                <p class="text-inverse mt-2 text-sm">{{ __('Live campaign chat and fast table updates.') }}</p>
                             </div>
-                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                                <p class="text-xs uppercase tracking-[0.2em] text-amber-300">{{ __('Campaigns') }}</p>
-                                <p class="mt-2 text-sm text-slate-200">{{ __('Public listings, invites, and join requests.') }}</p>
+                            <div class="hero-subcard">
+                                <p class="eyebrow-inverse text-xs">{{ __('Campaigns') }}</p>
+                                <p class="text-inverse mt-2 text-sm">{{ __('Public listings, invites, and join requests.') }}</p>
                             </div>
-                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                                <p class="text-xs uppercase tracking-[0.2em] text-amber-300">{{ __('Compendium') }}</p>
-                                <p class="mt-2 text-sm text-slate-200">{{ __('Keep primers, links, and table notes together.') }}</p>
+                            <div class="hero-subcard">
+                                <p class="eyebrow-inverse text-xs">{{ __('Compendium') }}</p>
+                                <p class="text-inverse mt-2 text-sm">{{ __('Keep primers, links, and table notes together.') }}</p>
                             </div>
                         </div>
                     </div>

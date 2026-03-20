@@ -16,7 +16,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between gap-4">
             <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ $campaign->gameSystem->name }}</p>
+                <p class="eyebrow">{{ $campaign->gameSystem->name }}</p>
                 <h2 class="mt-3 font-display text-4xl leading-tight">{{ $campaign->title }}</h2>
                 <p class="mt-2 max-w-3xl text-sm leading-7" style="color: var(--app-text-muted);">{{ $campaign->synopsis }}</p>
             </div>
@@ -33,7 +33,7 @@
         <div class="page-stack mx-auto grid max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-[2fr,1fr] lg:px-8">
             <section class="space-y-6">
                 @if (session('status'))
-                    <div class="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-6 py-4 text-sm text-emerald-800 shadow-sm dark:text-emerald-300">
+                    <div class="callout callout-success px-6 py-4">
                         @switch(session('status'))
                             @case('campaign-join-requested')
                                 {{ __('Your join request has been sent to the GM.') }}
@@ -100,7 +100,7 @@
                                             </div>
                                             <div>
                                                 <x-input-label for="{{ 'reference_type_'.$reference->id }}" :value="__('Type')" />
-                                                <select id="{{ 'reference_type_'.$reference->id }}" name="type" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">
+                                                <select id="{{ 'reference_type_'.$reference->id }}" name="type" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm">
                                                     @foreach($referenceTypes as $value => $label)
                                                         <option value="{{ $value }}" @selected(old('type', $reference->type) === $value)>{{ $label }}</option>
                                                     @endforeach
@@ -110,7 +110,7 @@
 
                                         <div>
                                             <x-input-label for="{{ 'reference_content_'.$reference->id }}" :value="__('Content')" />
-                                            <textarea id="{{ 'reference_content_'.$reference->id }}" name="content" rows="4" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">{{ old('content', $reference->content) }}</textarea>
+                                            <textarea id="{{ 'reference_content_'.$reference->id }}" name="content" rows="4" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm">{{ old('content', $reference->content) }}</textarea>
                                         </div>
 
                                         <div class="grid gap-4 md:grid-cols-[2fr,1fr]">
@@ -139,7 +139,7 @@
                                     <form method="POST" action="{{ route('campaign-references.destroy', $reference) }}" class="mt-3">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-sm font-medium text-rose-600 transition hover:text-rose-500">
+                                        <button type="submit" class="link-danger text-sm font-medium transition">
                                             {{ __('Delete entry') }}
                                         </button>
                                     </form>
@@ -171,7 +171,7 @@
                 </div>
 
                 @if($canManageMembers)
-                    <div class="rounded-[2rem] border border-amber-300/30 bg-amber-500/10 p-8 shadow-sm">
+                    <div class="page-card-soft" style="background: var(--color-warning-surface); border-color: var(--color-warning-border);">
                         <div class="flex items-center justify-between gap-4">
                             <div>
                                 <h3 class="font-display text-2xl">{{ __('Pending join requests') }}</h3>
@@ -195,14 +195,14 @@
 
                                             <div>
                                                 <x-input-label for="{{ 'review_message_'.$member->id }}" :value="__('Optional message')" />
-                                                <textarea id="{{ 'review_message_'.$member->id }}" name="message" rows="3" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30" placeholder="{{ __('Share a short approval note or denial reason.') }}">{{ old('message') }}</textarea>
+                                                <textarea id="{{ 'review_message_'.$member->id }}" name="message" rows="3" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm" placeholder="{{ __('Share a short approval note or denial reason.') }}">{{ old('message') }}</textarea>
                                             </div>
 
                                             <div class="flex flex-wrap gap-3">
                                                 <button type="submit" name="status" value="active" class="accent-button inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold transition">
                                                     {{ __('Approve request') }}
                                                 </button>
-                                                <button type="submit" name="status" value="rejected" class="page-outline-button border-rose-300/30 text-rose-700 dark:text-rose-300">
+                                                <button type="submit" name="status" value="rejected" class="page-outline-button outline-danger">
                                                     {{ __('Deny request') }}
                                                 </button>
                                             </div>
@@ -306,12 +306,12 @@
                     @endif
 
                     @if($viewerMembership?->status === \App\Enums\CampaignMemberStatus::PENDING)
-                        <div class="rounded-[2rem] border border-amber-300/30 bg-amber-500/10 p-6 shadow-sm">
+                        <div class="callout callout-warning rounded-[2rem] p-6">
                             <h3 class="font-display text-2xl">{{ __('Join request pending') }}</h3>
                             <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('Your request is waiting for GM review.') }}</p>
                         </div>
                     @elseif($viewerMembership?->status === \App\Enums\CampaignMemberStatus::REJECTED)
-                        <div class="rounded-[2rem] border border-rose-300/30 bg-rose-500/10 p-6 shadow-sm">
+                        <div class="callout callout-danger rounded-[2rem] p-6">
                             <h3 class="font-display text-2xl">{{ __('Join request declined') }}</h3>
                             <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('The GM declined your request for this campaign.') }}</p>
                             @if($viewerMembership->review_message)
@@ -322,12 +322,12 @@
                             @endif
                         </div>
                     @elseif($viewerMembership?->status === \App\Enums\CampaignMemberStatus::INVITED)
-                        <div class="rounded-[2rem] border border-sky-300/30 bg-sky-500/10 p-6 shadow-sm">
+                        <div class="callout callout-info rounded-[2rem] p-6">
                             <h3 class="font-display text-2xl">{{ __('Invitation pending') }}</h3>
                             <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('You have been invited to this campaign and are waiting for GM confirmation.') }}</p>
                         </div>
                     @elseif($viewerMembership?->status === \App\Enums\CampaignMemberStatus::ACTIVE)
-                        <div class="rounded-[2rem] border border-emerald-300/30 bg-emerald-500/10 p-6 shadow-sm">
+                        <div class="callout callout-success rounded-[2rem] p-6">
                             <h3 class="font-display text-2xl">{{ __('You are part of this table') }}</h3>
                             <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('You already belong to this campaign and can access member-only tools below.') }}</p>
                         </div>
@@ -353,7 +353,7 @@
                                 </div>
                                 <div>
                                     <x-input-label for="session_description" :value="__('Description')" />
-                                    <textarea id="session_description" name="description" rows="3" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30"></textarea>
+                                    <textarea id="session_description" name="description" rows="3" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm"></textarea>
                                 </div>
                                 <div>
                                     <x-input-label for="session_starts_at" :value="__('Starts at')" />
@@ -383,7 +383,7 @@
                             </div>
                             <div class="mt-4">
                                 <x-input-label for="role" :value="__('Role')" />
-                                <select id="role" name="role" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">
+                                <select id="role" name="role" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm">
                                     <option value="player">{{ __('Player') }}</option>
                                     <option value="spectator">{{ __('Spectator') }}</option>
                                 </select>
@@ -404,7 +404,7 @@
                                 </div>
                                 <div>
                                     <x-input-label for="reference_type" :value="__('Type')" />
-                                    <select id="reference_type" name="type" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30" required>
+                                    <select id="reference_type" name="type" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm" required>
                                         @foreach($referenceTypes as $value => $label)
                                             <option value="{{ $value }}" @selected(old('type') === $value)>{{ $label }}</option>
                                         @endforeach
@@ -413,7 +413,7 @@
                                 </div>
                                 <div>
                                     <x-input-label for="reference_content" :value="__('Content')" />
-                                    <textarea id="reference_content" name="content" rows="4" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">{{ old('content') }}</textarea>
+                                    <textarea id="reference_content" name="content" rows="4" class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm">{{ old('content') }}</textarea>
                                     <x-input-error class="mt-2" :messages="$errors->get('content')" />
                                 </div>
                                 <div>

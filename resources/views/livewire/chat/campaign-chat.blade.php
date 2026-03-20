@@ -12,7 +12,7 @@
                     id="chat_message_content"
                     wire:model="content"
                     rows="4"
-                    class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30"
+                    class="form-surface mt-1 block w-full rounded-[1.5rem] border px-4 py-3 shadow-sm"
                     required
                 ></textarea>
                 <x-input-error class="mt-2" :messages="$errors->get('content')" />

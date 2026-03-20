@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between gap-4">
             <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('Your active tables') }}</p>
+                <p class="eyebrow">{{ __('Your active tables') }}</p>
                 <h2 class="mt-3 font-display text-3xl leading-tight">{{ __('My Campaigns') }}</h2>
                 <p class="mt-2 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('Campaigns you run or actively belong to appear here.') }}</p>
             </div>
@@ -24,7 +24,7 @@
 
                     <div>
                         <x-input-label for="my_campaigns_status" :value="__('Status')" />
-                        <select id="my_campaigns_status" name="status" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm focus:border-amber-400/40 focus:ring-amber-400/30">
+                        <select id="my_campaigns_status" name="status" class="form-surface mt-1 block w-full rounded-2xl border px-4 py-3 shadow-sm">
                             <option value="">{{ __('Any') }}</option>
                             @foreach(['open', 'full', 'ongoing', 'paused', 'finished'] as $value)
                                 <option value="{{ $value }}" @selected($filters['status'] === $value)>{{ ucfirst($value) }}</option>

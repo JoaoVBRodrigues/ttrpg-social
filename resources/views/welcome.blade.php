@@ -50,7 +50,7 @@
             <main class="relative">
                 <section class="mx-auto grid max-w-7xl gap-10 px-4 pb-12 pt-8 sm:px-6 lg:grid-cols-[1.1fr,0.9fr] lg:px-8 lg:pb-20 lg:pt-12">
                     <div class="max-w-2xl">
-                        <p class="text-sm font-semibold uppercase tracking-[0.35em] text-amber-500">{{ __('Organize your next adventure') }}</p>
+                        <p class="eyebrow">{{ __('Organize your next adventure') }}</p>
                         <h1 class="mt-6 font-display text-5xl leading-tight sm:text-6xl">{{ __('The home for campaigns, players, and every moment between sessions.') }}</h1>
                         <p class="mt-6 max-w-xl text-lg leading-8" style="color: var(--app-text-muted);">{{ __('Discover open tables, run your own campaigns, coordinate attendance, keep references in one place, and make session chat feel alive with realtime updates and dice rolls.') }}</p>
 
@@ -59,26 +59,26 @@
                                 <a href="{{ route('campaigns.mine') }}" class="accent-button inline-flex items-center rounded-full px-6 py-3 text-sm font-semibold transition">{{ __('Go to My Campaigns') }}</a>
                             @else
                                 <a href="{{ route('register') }}" class="accent-button inline-flex items-center rounded-full px-6 py-3 text-sm font-semibold transition">{{ __('Start for free') }}</a>
-                                <a href="{{ route('login') }}" class="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold transition hover:border-amber-400/50 dark:bg-slate-900/60">{{ __('Log in') }}</a>
+                                <a href="{{ route('login') }}" class="ghost-button px-6 py-3">{{ __('Log in') }}</a>
                             @endauth
-                            <a href="{{ route('campaigns.index') }}" class="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold transition hover:border-amber-400/50 dark:bg-slate-900/60">{{ __('Browse public campaigns') }}</a>
+                            <a href="{{ route('campaigns.index') }}" class="ghost-button px-6 py-3">{{ __('Browse public campaigns') }}</a>
                         </div>
 
                         <div class="mt-10 grid gap-4 sm:grid-cols-4">
                             <div class="surface-panel rounded-3xl px-4 py-5">
-                                <p class="text-xs uppercase tracking-[0.2em] text-amber-500">{{ __('Campaigns') }}</p>
+                                <p class="eyebrow text-xs">{{ __('Campaigns') }}</p>
                                 <p class="mt-3 text-3xl font-semibold">{{ $highlights['campaigns'] }}</p>
                             </div>
                             <div class="surface-panel rounded-3xl px-4 py-5">
-                                <p class="text-xs uppercase tracking-[0.2em] text-amber-500">{{ __('Systems') }}</p>
+                                <p class="eyebrow text-xs">{{ __('Systems') }}</p>
                                 <p class="mt-3 text-3xl font-semibold">{{ $highlights['systems'] }}</p>
                             </div>
                             <div class="surface-panel rounded-3xl px-4 py-5">
-                                <p class="text-xs uppercase tracking-[0.2em] text-amber-500">{{ __('Players') }}</p>
+                                <p class="eyebrow text-xs">{{ __('Players') }}</p>
                                 <p class="mt-3 text-3xl font-semibold">{{ $highlights['players'] }}</p>
                             </div>
                             <div class="surface-panel rounded-3xl px-4 py-5">
-                                <p class="text-xs uppercase tracking-[0.2em] text-amber-500">{{ __('Active seats') }}</p>
+                                <p class="eyebrow text-xs">{{ __('Active seats') }}</p>
                                 <p class="mt-3 text-3xl font-semibold">{{ $highlights['memberships'] }}</p>
                             </div>
                         </div>
@@ -87,10 +87,10 @@
                     <div class="surface-panel overflow-hidden rounded-[2rem] p-6 sm:p-8">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('Session control') }}</p>
+                                <p class="eyebrow">{{ __('Session control') }}</p>
                                 <h2 class="mt-3 font-display text-3xl">{{ __('Run the table without juggling five tools.') }}</h2>
                             </div>
-                            <span class="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">{{ __('Live') }}</span>
+                            <span class="page-chip page-chip-live">{{ __('Live') }}</span>
                         </div>
 
                         <div class="mt-8 space-y-4">
@@ -113,7 +113,7 @@
                 <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
                     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                         <div>
-                            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('Featured tables') }}</p>
+                            <p class="eyebrow">{{ __('Featured tables') }}</p>
                             <h2 class="mt-3 font-display text-3xl">{{ __('Open campaigns recruiting right now') }}</h2>
                         </div>
                         <a href="{{ route('campaigns.index') }}" class="theme-link text-sm font-semibold uppercase tracking-[0.2em] transition">{{ __('View all campaigns') }}</a>
@@ -124,10 +124,10 @@
                             <article class="surface-panel rounded-[2rem] p-6">
                                 <div class="flex items-start justify-between gap-4">
                                     <div>
-                                        <p class="text-xs uppercase tracking-[0.24em] text-amber-500">{{ $campaign->gameSystem->name }}</p>
+                                        <p class="eyebrow text-xs">{{ $campaign->gameSystem->name }}</p>
                                         <h3 class="mt-3 font-display text-2xl">{{ $campaign->title }}</h3>
                                     </div>
-                                    <span class="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">{{ ucfirst($campaign->status->value) }}</span>
+                                    <span class="page-chip">{{ ucfirst($campaign->status->value) }}</span>
                                 </div>
 
                                 <p class="mt-4 text-sm leading-7" style="color: var(--app-text-muted);">{{ $campaign->synopsis }}</p>
@@ -138,7 +138,7 @@
                                 </div>
 
                                 <div class="mt-6">
-                                    <a href="{{ route('campaigns.show', $campaign) }}" class="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold transition hover:border-amber-400/50 dark:bg-slate-900/60">{{ __('View campaign') }}</a>
+                                    <a href="{{ route('campaigns.show', $campaign) }}" class="ghost-button">{{ __('View campaign') }}</a>
                                 </div>
                             </article>
                         @empty
@@ -152,18 +152,18 @@
 
                 <section class="mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:px-8">
                     <div class="surface-panel rounded-[2rem] p-8">
-                        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('Systems and compendium') }}</p>
+                        <p class="eyebrow">{{ __('Systems and compendium') }}</p>
                         <h2 class="mt-4 font-display text-3xl">{{ __('Keep primers, links, and table lore where everyone can find them.') }}</h2>
                         <p class="mt-4 text-sm leading-7" style="color: var(--app-text-muted);">{{ __('Attach onboarding notes, session zero agreements, house rules, and reference links directly to the campaign so new players can catch up fast.') }}</p>
                     </div>
 
                     <div class="surface-panel rounded-[2rem] p-8">
-                        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('What groups say') }}</p>
+                        <p class="eyebrow">{{ __('What groups say') }}</p>
                         <div class="mt-5 space-y-5">
-                            <blockquote class="rounded-3xl border border-white/10 bg-white/10 p-5 text-sm leading-7 dark:bg-slate-900/50">
+                            <blockquote class="hero-subcard text-sm leading-7">
                                 “{{ __('We stopped losing track of RSVPs and table notes between Discord, spreadsheets, and chat. Everything important is finally in one place.') }}”
                             </blockquote>
-                            <blockquote class="rounded-3xl border border-white/10 bg-white/10 p-5 text-sm leading-7 dark:bg-slate-900/50">
+                            <blockquote class="hero-subcard text-sm leading-7">
                                 “{{ __('The public campaign page made it much easier to recruit one more player without rewriting the pitch every week.') }}”
                             </blockquote>
                         </div>
@@ -172,7 +172,7 @@
 
                 <section class="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 lg:px-8">
                     <div class="surface-panel rounded-[2.25rem] px-8 py-10 text-center sm:px-12">
-                        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-500">{{ __('Ready to gather the party?') }}</p>
+                        <p class="eyebrow">{{ __('Ready to gather the party?') }}</p>
                         <h2 class="mt-4 font-display text-4xl">{{ __('Build your next campaign hub in minutes.') }}</h2>
                         <p class="mx-auto mt-4 max-w-2xl text-sm leading-7" style="color: var(--app-text-muted);">{{ __('Create your table, invite players, manage join requests, and keep your group aligned from session zero onward.') }}</p>
                         <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -181,7 +181,7 @@
                             @else
                                 <a href="{{ route('register') }}" class="accent-button inline-flex items-center rounded-full px-6 py-3 text-sm font-semibold transition">{{ __('Create account') }}</a>
                             @endauth
-                            <a href="{{ route('campaigns.index') }}" class="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold transition hover:border-amber-400/50 dark:bg-slate-900/60">{{ __('Browse campaigns') }}</a>
+                            <a href="{{ route('campaigns.index') }}" class="ghost-button px-6 py-3">{{ __('Browse campaigns') }}</a>
                         </div>
                     </div>
                 </section>
