@@ -47,7 +47,10 @@ RUN mkdir -p \
     storage/framework/cache/data \
     bootstrap/cache
 
-# Instalar dependências do PHP para produção (sem dev e otimizando o autoloader)
+# O Laravel 11 usa reverb por padrão e quebra o discover no build se a env não existir
+ENV BROADCAST_CONNECTION=log
+
+# Instalar dependências do PHP para produção (sem dev, no-interaction, garantindo o build)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Ajustar permissões para os diretórios que o Laravel precisa escrever
