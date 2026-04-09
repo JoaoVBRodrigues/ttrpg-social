@@ -39,6 +39,14 @@ COPY . .
 # Copiar assets buildados do frontend gerados no Estágio 1
 COPY --from=node_build /app/public/build ./public/build
 
+# Criar diretórios que o Laravel precisa para rodar o package:discover durante a instalação
+RUN mkdir -p \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/framework/cache \
+    storage/framework/cache/data \
+    bootstrap/cache
+
 # Instalar dependências do PHP para produção (sem dev e otimizando o autoloader)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
