@@ -22,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Forçar HTTPS em produção (Evita erro de Mixed Content bloqueando CSS no Railway)
+        if (config('app.env') === 'production') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         Event::listen(function (JobFailed $event): void {
             Log::error('Queued job failed.', [
                 'connection' => $event->connectionName,
