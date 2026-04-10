@@ -25,7 +25,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Ativar mod_rewrite do Apache (necessário pro Laravel)
-RUN a2enmod rewrite
+# E forçar desativação de mpm_event e mpm_worker que às vezes ativam ao atualizar pacotes (erro More than one MPM)
+RUN a2dismod mpm_event mpm_worker || true \
+    && a2enmod mpm_prefork \
+    && a2enmod rewrite
 
 # Instalar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
