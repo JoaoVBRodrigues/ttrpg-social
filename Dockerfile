@@ -38,6 +38,8 @@ WORKDIR /var/www/html
 
 # Copiar arquivos do projeto para o container
 COPY . .
+# Remover o arquivo 'hot' caso tenha sido comitado sem querer (ele quebra o CSS em prod)
+RUN rm -f public/hot
 
 # Copiar assets buildados do frontend gerados no Estágio 1
 COPY --from=node_build /app/public/build ./public/build
