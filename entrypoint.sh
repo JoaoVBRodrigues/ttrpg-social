@@ -24,6 +24,10 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+echo "Limpando conflitos de modulos MPM do Apache..."
+a2dismod mpm_event mpm_worker || true
+rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_worker.load
+
 echo "Iniciando Apache..."
 # Executa o comando passado pelo CMD do Dockerfile (apache2-foreground)
 exec "$@"
